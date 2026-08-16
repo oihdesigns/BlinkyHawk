@@ -292,12 +292,9 @@
           <tr><td>240&nbsp;V</td><td>2.4&nbsp;mA</td><td>576&nbsp;mW</td></tr>
         </tbody>
       </table></div>
-      <p>The resistor currently fitted is a <strong>1/8&nbsp;W (125&nbsp;mW) part</strong>, so it
-        reaches its rating at about <strong>110&nbsp;V</strong> and is already past it at
-        120&nbsp;V mains. <strong>Keep this position well away from mains and above.</strong>
-        The part is what was on hand rather than a considered choice — the rating for the final
-        design is not settled, so do not read 110&nbsp;V as the feature's intended limit in either
-        direction.</p>
+      <p>The wattage rating of the resistor in the final production design is still pending. If you
+        have a pre-production unit, assume it is a <strong>1/8&nbsp;W part, which hits its maximum
+        at 110&nbsp;V</strong>, unless I have told you otherwise.</p>
     </div>
     <div class="callout">
       <p><strong>It also changes your meter's other modes.</strong> In the 100&nbsp;kΩ position an
@@ -338,7 +335,7 @@
     <ul class="clean">
       <li><strong>Single beep</strong> the moment the leads close, then a short reminder beep
         about once a second for as long as continuity holds.</li>
-      <li><strong>Double beep</strong> (higher pitch) when a voltage is detected. This is a
+      <li><strong>Double beep</strong> when a voltage is detected. This is a
         priority alert — it sounds immediately, even mid-continuity-beep.</li>
       <li><strong>Rate-limited:</strong> an intermittent connection can't machine-gun the buzzer;
         beep sequences are capped at 2 per second.</li>

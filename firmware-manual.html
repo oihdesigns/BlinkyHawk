@@ -238,8 +238,8 @@
         <code>THRESH00…THRESH11</code> are compared directly against the metric, switching
         <code>DETMETHOD</code> changes what those four numbers <em>mean</em> (volts, milliseconds, or
         volt·milliseconds). After changing the method you must re-tune the threshold values for the
-        new units, then <code>!SAVE</code>. The unit ships on <strong>method 0</strong>, whose
-        behaviour is unchanged from earlier firmware.</p>
+        new units, then <code>!SAVE</code>. <strong>The unit ships on method 1</strong>
+        (time-to-return), so its thresholds are in <strong>milliseconds</strong>.</p>
     </div>
 
     <div class="callout">
@@ -274,9 +274,14 @@
       <li><strong>Continuity:</strong> a short beep the moment contact is made, then (by default)
         a repeat beep every second for as long as the circuit stays closed
         (<code>CONTREP</code>/<code>CONTREPMS</code>).</li>
-      <li><strong>Voltage:</strong> a double beep at a higher pitch, once per detection
+      <li><strong>Voltage:</strong> a double beep, once per detection
         (<code>VOLTPULSES</code>/<code>VOLTREP</code>). Voltage is a priority alert — it sounds
         immediately even if a continuity beep just fired.</li>
+      <li><strong>Both alerts run at the same pitch.</strong> The fitted buzzer is only usefully
+        loud near <strong>4&nbsp;kHz</strong>, so that is where both are set; the two alerts are told
+        apart by their pulse pattern (one beep vs two), not by tone. <code>CONTFREQ</code> and
+        <code>VOLTFREQ</code> can still be set independently, but moving either far from 4&nbsp;kHz
+        mostly just makes that alert quieter.</li>
       <li><strong>Rate cap:</strong> no new beep sequence can start within
         <code>BEEPMIN</code>&nbsp;ms of the previous one, so an intermittent connection can't
         machine-gun the beeper.</li>
@@ -382,11 +387,10 @@ $DIP,0,0.1500</span>
         exist for measuring that knee, not for shipping.</p>
     </div>
     <div class="callout">
-      <p><strong>As configured for shipping:</strong> <code>SLEEPTICKMS</code>&nbsp;63 and
+      <p><strong>As shipped:</strong> <code>SLEEPTICKMS</code>&nbsp;63 and
         <code>SLEEPSEC</code>&nbsp;1 — the unit sleeps a second after the leads go open and checks
-        them about sixteen times a second, for roughly 2&nbsp;mA average. This is a configuration,
-        not the compile-time default listed in <a href="#config">section 7</a>; a unit reset with
-        <code>!DEFAULTS</code> comes back at 2000&nbsp;ms / 15&nbsp;s and must be re-set.</p>
+        them about sixteen times a second, for roughly 2&nbsp;mA average. These are the factory
+        defaults, so <code>!DEFAULTS</code> restores them rather than undoing them.</p>
     </div>
 
     <h3>Wake thresholds</h3>
@@ -555,14 +559,14 @@ $DIP,0,0.1500</span>
     <div class="tablewrap"><table>
       <thead><tr><th>Key</th><th>Type</th><th>Default</th><th>Range</th><th>What it controls</th></tr></thead>
       <tbody>
-        <tr><td><code>REFCENTER</code></td><td>volts</td><td>&minus;0.02</td><td>&minus;1 … 1</td><td>Resting differential centre. Voltage detection measures deviation from this point.</td></tr>
+        <tr><td><code>REFCENTER</code></td><td>volts</td><td>0.018</td><td>&minus;1 … 1</td><td>Resting differential centre. Voltage detection measures deviation from this point.</td></tr>
         <tr><td><code>REFBAND</code></td><td>volts</td><td>0.025</td><td>0.001 … 1</td><td>Half-width of the "no voltage present" window around <code>REFCENTER</code>.</td></tr>
         <tr><td><code>THRESHSEL</code></td><td>0–3</td><td>3</td><td>0 … 3</td><td>Which threshold slot is active: 0&nbsp;=&nbsp;<code>THRESH00</code>, 1&nbsp;=&nbsp;<code>THRESH01</code>, 2&nbsp;=&nbsp;<code>THRESH10</code>, 3&nbsp;=&nbsp;<code>THRESH11</code>. Takes effect on the next detection pass. Ignored on a V2 board, where the DIP switches decide.</td></tr>
         <tr><td><code>THRESH00</code></td><td>units*</td><td>0.15</td><td>0.001 … 3.3</td><td>Open/closed threshold for slot 00 (<code>THRESHSEL</code>&nbsp;0) — the most sensitive setting.</td></tr>
         <tr><td><code>THRESH01</code></td><td>units*</td><td>0.54</td><td>0.001 … 3.3</td><td>Threshold for slot 01 (<code>THRESHSEL</code>&nbsp;1).</td></tr>
         <tr><td><code>THRESH10</code></td><td>units*</td><td>0.45</td><td>0.001 … 3.3</td><td>Threshold for slot 10 (<code>THRESHSEL</code>&nbsp;2) — the factory setting.</td></tr>
-        <tr><td><code>THRESH11</code></td><td>units*</td><td>0.62</td><td>0.001 … 3.3</td><td>Threshold for slot 11 (<code>THRESHSEL</code>&nbsp;3) — the least sensitive setting.</td></tr>
-        <tr><td><code>DETMETHOD</code></td><td>0/1/2</td><td>0</td><td>0 … 2</td><td>Detection method: 0 = single reading (volts), 1 = time-to-return (ms), 2 = tail area (V·ms). See <a href="#detection">section 2</a>. Changing this changes the units of the <code>THRESH</code> keys.</td></tr>
+        <tr><td><code>THRESH11</code></td><td>units*</td><td>1.00</td><td>0.001 … 3.3</td><td>Threshold for slot 11 (<code>THRESHSEL</code>&nbsp;3) — the least sensitive setting.</td></tr>
+        <tr><td><code>DETMETHOD</code></td><td>0/1/2</td><td>1</td><td>0 … 2</td><td>Detection method: 0 = single reading (volts), 1 = time-to-return (ms), 2 = tail area (V·ms). See <a href="#detection">section 2</a>. Changing this changes the units of the <code>THRESH</code> keys.</td></tr>
         <tr><td><code>DETBAND</code></td><td>volts</td><td>0.05</td><td>0.005 … 1</td><td>Method&nbsp;1 only: the differential is "returned" once it comes back within this band of the resting centre.</td></tr>
         <tr><td><code>DETWINUS</code></td><td>µs</td><td>1500</td><td>200 … 5000</td><td>Methods&nbsp;1&nbsp;&amp;&nbsp;2: maximum recovery-sampling window. Also the timeout — if the differential never returns, the metric maxes out (reads as fully open).</td></tr>
         <tr><td><code>DETAREAUS</code></td><td>µs</td><td>400</td><td>0 … 5000</td><td>Method&nbsp;2 only: where the area integration starts, measured from the MOSFET-off instant. Skips the common initial dip so only the discriminating tail is integrated.</td></tr>
@@ -578,7 +582,10 @@ $DIP,0,0.1500</span>
     </table></div>
     <p class="small">* <strong><code>THRESH</code> units follow <code>DETMETHOD</code>:</strong>
       volts when method&nbsp;0, milliseconds when method&nbsp;1, volt·milliseconds when method&nbsp;2.
-      The defaults shown are the method-0 (volts) values the unit ships with.</p>
+      The unit ships on method&nbsp;1, so <strong><code>THRESH11</code>'s 1.00 default is
+      1.00&nbsp;ms</strong>. Slots 00–10 still carry their old method-0 <em>volt</em> figures and
+      have not been re-characterised for method&nbsp;1 — only slot&nbsp;11, the factory selection, is
+      a bench-tuned value. Re-tune a slot before relying on it.</p>
 
     <h3>Alerts</h3>
     <div class="tablewrap"><table>
@@ -587,16 +594,16 @@ $DIP,0,0.1500</span>
         <tr><td><code>LED</code></td><td>bool</td><td>1</td><td>0/1</td><td>Master enable for the detection LED alerts (charging/battery indications still show).</td></tr>
         <tr><td><code>BEEP</code></td><td>bool</td><td>1</td><td>0/1</td><td>Master enable for the speaker. <code>!SET,BEEP,0</code> + <code>!SAVE</code> = permanently silent unit.</td></tr>
         <tr><td><code>BOOTMUTE</code></td><td>bool</td><td>1</td><td>0/1</td><td>Enable the "leads shorted at boot mutes audio for the session" feature.</td></tr>
-        <tr><td><code>PASSIVE</code></td><td>bool</td><td>1</td><td>0/1</td><td>1 = passive buzzer driven with tones (different pitches per alert); 0 = active buzzer (fixed tone, pin switched on/off).</td></tr>
-        <tr><td><code>CONTFREQ</code></td><td>Hz</td><td>2000</td><td>100 … 10000</td><td>Continuity beep pitch (passive buzzer only).</td></tr>
-        <tr><td><code>VOLTFREQ</code></td><td>Hz</td><td>2500</td><td>100 … 10000</td><td>Voltage beep pitch (passive buzzer only).</td></tr>
+        <tr><td><code>PASSIVE</code></td><td>bool</td><td>1</td><td>0/1</td><td>1 = passive buzzer driven with a tone at the pitch below; 0 = active buzzer (fixed tone, pin simply switched on/off).</td></tr>
+        <tr><td><code>CONTFREQ</code></td><td>Hz</td><td>4000</td><td>100 … 10000</td><td>Continuity beep pitch (passive buzzer only). The buzzer is a resonator and is only usefully loud near 4&nbsp;kHz — moving far from it mostly just makes the alert quieter.</td></tr>
+        <tr><td><code>VOLTFREQ</code></td><td>Hz</td><td>4000</td><td>100 … 10000</td><td>Voltage beep pitch (passive buzzer only). Same 4&nbsp;kHz as <code>CONTFREQ</code> — the two alerts differ by pulse count, not pitch.</td></tr>
         <tr><td><code>CONTPULSES</code></td><td>count</td><td>1</td><td>1 … 5</td><td>Pulses per continuity beep.</td></tr>
         <tr><td><code>VOLTPULSES</code></td><td>count</td><td>2</td><td>1 … 5</td><td>Pulses per voltage beep (2 = the signature double-beep).</td></tr>
         <tr><td><code>CONTREP</code></td><td>bool</td><td>1</td><td>0/1</td><td>Keep re-beeping while continuity holds.</td></tr>
         <tr><td><code>VOLTREP</code></td><td>bool</td><td>0</td><td>0/1</td><td>Keep re-beeping while voltage persists.</td></tr>
         <tr><td><code>CONTREPMS</code></td><td>ms</td><td>1000</td><td>100 … 60000</td><td>Repeat period for the continuity beep.</td></tr>
         <tr><td><code>VOLTREPMS</code></td><td>ms</td><td>1000</td><td>100 … 60000</td><td>Repeat period for the voltage beep (when <code>VOLTREP</code>=1).</td></tr>
-        <tr><td><code>BEEPMIN</code></td><td>ms</td><td>500</td><td>50 … 10000</td><td>Minimum gap between beep sequences — the anti-machine-gun rate cap.</td></tr>
+        <tr><td><code>BEEPMIN</code></td><td>ms</td><td>250</td><td>50 … 10000</td><td>Minimum gap between beep sequences — the anti-machine-gun rate cap.</td></tr>
       </tbody>
     </table></div>
 
@@ -608,11 +615,11 @@ $DIP,0,0.1500</span>
     <div class="tablewrap"><table>
       <thead><tr><th>Key</th><th>Type</th><th>Default</th><th>Range</th><th>What it controls</th></tr></thead>
       <tbody>
-        <tr><td><code>CONTONMS</code></td><td>ms</td><td>20</td><td>1 … 2000</td><td>Continuity pulse on-time at <strong>first contact</strong>.</td></tr>
-        <tr><td><code>CONTHOLDMS</code></td><td>ms</td><td>50</td><td>1 … 2000</td><td>Continuity pulse on-time for the <strong>ongoing re-beep</strong> while the connection is held. Separate from <code>CONTONMS</code> so the first contact can be a short click and the reminder a longer tone (or the reverse).</td></tr>
+        <tr><td><code>CONTONMS</code></td><td>ms</td><td>100</td><td>1 … 2000</td><td>Continuity pulse on-time at <strong>first contact</strong>.</td></tr>
+        <tr><td><code>CONTHOLDMS</code></td><td>ms</td><td>100</td><td>1 … 2000</td><td>Continuity pulse on-time for the <strong>ongoing re-beep</strong> while the connection is held. Separate from <code>CONTONMS</code> so the first contact can be a short click and the reminder a longer tone (or the reverse).</td></tr>
         <tr><td><code>CONTOFFMS</code></td><td>ms</td><td>10</td><td>1 … 2000</td><td>Gap between pulses within a multi-pulse continuity beep.</td></tr>
         <tr><td><code>VOLTONMS</code></td><td>ms</td><td>20</td><td>1 … 2000</td><td>Voltage pulse on-time.</td></tr>
-        <tr><td><code>VOLTOFFMS</code></td><td>ms</td><td>10</td><td>1 … 2000</td><td>Gap between pulses within the voltage beep — with the default <code>VOLTPULSES</code>&nbsp;2, this is the gap that makes it read as a double-beep.</td></tr>
+        <tr><td><code>VOLTOFFMS</code></td><td>ms</td><td>10</td><td>1 … 2000</td><td>Gap between pulses within the voltage beep — this is the gap that separates the <code>VOLTPULSES</code> pulses into an audibly distinct burst.</td></tr>
       </tbody>
     </table></div>
 
@@ -624,10 +631,10 @@ $DIP,0,0.1500</span>
     <div class="tablewrap"><table>
       <thead><tr><th>Key</th><th>Type</th><th>Default</th><th>Range</th><th>What it controls</th></tr></thead>
       <tbody>
-        <tr><td><code>LEDFLOATBR</code></td><td>0–255</td><td>28</td><td>0 … 255</td><td>Floating (blue) brightness. Deliberately dim — it is the state the unit is in most of the time. <strong>0 = leave this state dark.</strong></td></tr>
-        <tr><td><code>LEDFLOATMS</code></td><td>ms</td><td>150</td><td>1 … 10000</td><td>Floating flash on-time.</td></tr>
+        <tr><td><code>LEDFLOATBR</code></td><td>0–255</td><td>20</td><td>0 … 255</td><td>Floating (blue) brightness. Deliberately dim — it is the state the unit is in most of the time. <strong>0 = leave this state dark.</strong></td></tr>
+        <tr><td><code>LEDFLOATMS</code></td><td>ms</td><td>50</td><td>1 … 10000</td><td>Floating flash on-time.</td></tr>
         <tr><td><code>LEDFLOATPER</code></td><td>ms</td><td>1000</td><td>1 … 60000</td><td>Floating: minimum gap between flash <em>starts</em> — i.e. a 1&nbsp;Hz rate cap.</td></tr>
-        <tr><td><code>LEDCLOSEDBR</code></td><td>0–255</td><td>200</td><td>0 … 255</td><td>Continuity (green) brightness. 0 = this state dark.</td></tr>
+        <tr><td><code>LEDCLOSEDBR</code></td><td>0–255</td><td>64</td><td>0 … 255</td><td>Continuity (green) brightness. 0 = this state dark.</td></tr>
         <tr><td><code>LEDCLOSEDMS</code></td><td>ms</td><td>200</td><td>1 … 10000</td><td>Continuity flash on-time.</td></tr>
         <tr><td><code>LEDCLOSEDPER</code></td><td>ms</td><td>500</td><td>1 … 60000</td><td>Continuity rate cap (2&nbsp;Hz by default).</td></tr>
         <tr><td><code>LEDVOLTBR</code></td><td>0–255</td><td>200</td><td>0 … 255</td><td>Voltage (red) brightness. 0 = this state dark.</td></tr>
@@ -643,22 +650,20 @@ $DIP,0,0.1500</span>
     </div>
 
     <h3>Low power</h3>
-    <p>Behaviour is described in <a href="#lowpower">section 5</a>. The defaults below are the
-      compile-time values; production units are configured faster (<code>SLEEPSEC</code>&nbsp;1,
-      <code>SLEEPTICKMS</code>&nbsp;63).</p>
+    <p>Behaviour is described in <a href="#lowpower">section 5</a>.</p>
     <div class="tablewrap"><table>
       <thead><tr><th>Key</th><th>Type</th><th>Default</th><th>Range</th><th>What it controls</th></tr></thead>
       <tbody>
-        <tr><td><code>SLEEPSEC</code></td><td>seconds</td><td>15</td><td>0 … 65535</td><td>Open-lead idle time before the unit sleeps. <strong>0 disables sleeping entirely.</strong> Anything other than an open lead restarts the countdown, as does being on USB or in diagnostic mode.</td></tr>
-        <tr><td><code>SLEEPTICKMS</code></td><td>ms</td><td>2000</td><td>4 … 2000</td><td>Base wake period. Snapped to the nearest rate the RTC can produce (2000/1000/500/250/125/63/31/16/8/4) and the snapped value is written back.</td></tr>
+        <tr><td><code>SLEEPSEC</code></td><td>seconds</td><td>1</td><td>0 … 65535</td><td>Open-lead idle time before the unit sleeps. <strong>0 disables sleeping entirely.</strong> Anything other than an open lead restarts the countdown, as does being on USB or in diagnostic mode.</td></tr>
+        <tr><td><code>SLEEPTICKMS</code></td><td>ms</td><td>63</td><td>4 … 2000</td><td>Base wake period. Snapped to the nearest rate the RTC can produce (2000/1000/500/250/125/63/31/16/8/4) and the snapped value is written back.</td></tr>
         <tr><td><code>SLEEPTICKS</code></td><td>count</td><td>1</td><td>1 … 255</td><td>Probe every N wake ticks. Worst-case detection latency is <code>SLEEPTICKMS</code>&nbsp;&times;&nbsp;this. Raise it alongside a faster tick to hold the probe rate — and the current — constant.</td></tr>
         <tr><td><code>SLEEPAVG</code></td><td>count</td><td>3</td><td>1 … 50</td><td>Readings per sleeping voltage check (against <code>VOLTAVG</code> when awake). Any one reading over the instant-bypass band wakes the unit; fewer reads = cheaper and quieter.</td></tr>
-        <tr><td><code>SLEEPHB</code></td><td>ticks</td><td>30</td><td>0 … 255</td><td>Heartbeat flash every N wake ticks. <strong>Counts ticks, not seconds</strong> — speed up <code>SLEEPTICKMS</code> and the heartbeat speeds up with it, so rescale this to match. 0 = no heartbeat.</td></tr>
+        <tr><td><code>SLEEPHB</code></td><td>ticks</td><td>32</td><td>0 … 255</td><td>Heartbeat flash every N wake ticks. <strong>Counts ticks, not seconds</strong> — speed up <code>SLEEPTICKMS</code> and the heartbeat speeds up with it, so rescale this to match. 0 = no heartbeat.</td></tr>
         <tr><td><code>SLEEPPARK</code></td><td>bool</td><td>0</td><td>0/1</td><td>1 = park the bridge MOSFET OFF while asleep, saving its leg of the current; 0 = leave it in the resting state it uses when awake.</td></tr>
         <tr><td><code>SLEEPTHR00</code></td><td>units*</td><td>0</td><td>0 … 3.3</td><td>Wake threshold for slot 00. <strong>0 = use <code>THRESH00</code></strong>.</td></tr>
         <tr><td><code>SLEEPTHR01</code></td><td>units*</td><td>0</td><td>0 … 3.3</td><td>Wake threshold for slot 01. 0 = use <code>THRESH01</code>.</td></tr>
         <tr><td><code>SLEEPTHR10</code></td><td>units*</td><td>0</td><td>0 … 3.3</td><td>Wake threshold for slot 10. 0 = use <code>THRESH10</code>.</td></tr>
-        <tr><td><code>SLEEPTHR11</code></td><td>units*</td><td>0</td><td>0 … 3.3</td><td>Wake threshold for slot 11. 0 = use <code>THRESH11</code>.</td></tr>
+        <tr><td><code>SLEEPTHR11</code></td><td>units*</td><td>1.2</td><td>0 … 3.3</td><td>Wake threshold for slot 11. 0 = use <code>THRESH11</code>.</td></tr>
       </tbody>
     </table></div>
 
@@ -761,8 +766,11 @@ $DIP,0,0.0200</span>
 
     <h3>Quieter, slower continuity reminder</h3>
     <pre>!SET,CONTREPMS,5000     <span class="c">// remind every 5 s instead of every 1 s</span>
-!SET,CONTFREQ,1500      <span class="c">// lower pitch</span>
+!SET,CONTHOLDMS,20      <span class="c">// and shorten the reminder pulse</span>
 !SAVE</pre>
+    <p class="small">Detuning <code>CONTFREQ</code> away from 4&nbsp;kHz also makes it quieter, but
+      it fights the buzzer's resonance rather than working with it — shortening the pulse or slowing
+      the repeat gives a cleaner result.</p>
 
     <h3>Check what a unit is currently configured to</h3>
     <pre>!CFG
