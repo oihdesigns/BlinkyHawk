@@ -189,7 +189,7 @@
       <li><strong>Plug your test leads into the back of Blinky Hawk's plugs.</strong> The
         connection is purely parallel: your probes, your meter, and your workflow are unchanged.</li>
       <li><strong>Flip the toggle toward the meter.</strong> That one position both powers the unit
-        and connects it to the measurement path. The switch has three positions — centre is off, and
+        and connects it to the measurement path. The switch has three positions — center is off, and
         the far side is a test load rather than a second on (<a href="#toggle">details
         below</a>).</li>
       <li><strong>Watch the power-on cue.</strong> The LED blinks green 1–4 times to report the
@@ -213,9 +213,9 @@
   <div class="wrap">
     <div class="eyebrow">3 &middot; The toggle</div>
     <h2>One switch: power, isolation, and a test load</h2>
-    <p>The toggle is a <strong>triple-pole, three-position switch</strong> with a centre-off. One
+    <p>The toggle is a <strong>triple-pole, three-position switch</strong> with a center-off. One
       pole switches the battery; the other two galvanically connect or disconnect both measurement
-      leads. <strong>The centre position is off</strong>, and the two ends do different things:</p>
+      leads. <strong>The center position is off</strong>, and the two ends do different things:</p>
     <div class="tablewrap"><table>
       <thead><tr><th>Position</th><th>Blinky Hawk</th><th>Across your probes</th><th>What it means</th></tr></thead>
       <tbody>
@@ -223,11 +223,11 @@
             <td>Normal operation. Blinky Hawk is powered and connected across the probes, detection
                 runs continuously, and the meter may show a few millivolts of
                 <a href="#ghost">ghost voltage</a> when the leads are open.</td></tr>
-        <tr><td><strong>Centre</strong></td><td>Off</td><td>Nothing</td>
+        <tr><td><strong>Center</strong></td><td>Off</td><td>Nothing</td>
             <td>Fully inert. The battery is disconnected <em>and</em> the detector is galvanically
                 removed from the probe circuit — your meter behaves 100% stock, with zero ghost
                 voltage and zero battery drain. You can leave Blinky Hawk fitted permanently and
-                simply centre the switch when you don't want it. This is the right position for the
+                simply center the switch when you don't want it. This is the right position for the
                 meter's non-voltage modes (Ω, continuity, diode, current). Note that it disconnects
                 the battery from the charger too — the switch must be toward the meter to
                 charge.</td></tr>
@@ -237,15 +237,16 @@
       </tbody>
     </table></div>
 
-    <h3>The 100 kΩ position: measuring how stiff a voltage is</h3>
+    <h3>The 100 kΩ position: identifying high-source-impedance voltages</h3>
     <p>A voltmeter reading tells you a voltage is present. It does not tell you whether that voltage
-      can <em>do</em> anything — whether it is a real supply or a few picofarads of coupling. The
-      difference shows up the moment you load it, and the three switch positions give you three
-      known loads without changing anything else in your setup:</p>
+      can <em>do</em> anything — whether it is a real supply, a reading sitting behind a large source
+      resistance, or a few picofarads of coupling. The difference shows up the moment you load it,
+      and the three switch positions give you three known loads without changing anything else in
+      your setup:</p>
     <div class="tablewrap"><table>
       <thead><tr><th>Switch</th><th>Load across the probes</th></tr></thead>
       <tbody>
-        <tr><td>Centre (off)</td><td>Your meter alone — typically <strong>10&nbsp;MΩ</strong></td></tr>
+        <tr><td>Center (off)</td><td>Your meter alone — typically <strong>10&nbsp;MΩ</strong></td></tr>
         <tr><td>Toward the meter</td><td><strong>1.1&nbsp;MΩ</strong> (Blinky Hawk's bridge), in parallel with the meter</td></tr>
         <tr><td>Away from the meter</td><td><strong>100&nbsp;kΩ</strong></td></tr>
       </tbody>
@@ -255,24 +256,25 @@
       almost always. The bridge switches off only for the brief instant of each open/closed test.</p>
     <p>Read the same point in each position and watch what the number does:</p>
     <ul class="clean">
-      <li><strong>Barely moves</strong> → a stiff, low-impedance source. A real supply rail, a
-        battery, an energised circuit.</li>
-      <li><strong>Sags noticeably at 1&nbsp;MΩ and collapses at 100&nbsp;kΩ</strong> → a high-impedance
-        source. A resistive divider, leakage, or a high-value pull-up.</li>
-      <li><strong>Nearly vanishes as soon as you load it at all</strong> → capacitive coupling —
-        <a href="#ghost">ghost voltage</a> from an adjacent conductor, not a source you can draw
-        from.</li>
+      <li><strong>Barely moves</strong> → a supply rail. A stiff, low-impedance source: a real
+        rail, a battery, an energized circuit.</li>
+      <li><strong>Sags significantly</strong> → a <strong>high-source-resistance voltage</strong>.
+        Real, but behind a large resistance — a resistive divider, leakage, or a high-value
+        pull-up. It reads full scale unloaded and cannot hold up under any load.</li>
+      <li><strong>Collapses quickly toward zero</strong> → a phantom voltage. Capacitive coupling
+        from an adjacent conductor — see <a href="#ghost">ghost voltage</a> — not a source you can
+        draw from at all.</li>
     </ul>
     <p>If you want a number rather than an impression, one loaded reading is enough. With
-      <span class="mono">V<sub>open</sub></span> measured in the centre position and
+      <span class="mono">V<sub>open</sub></span> measured in the center position and
       <span class="mono">V<sub>load</sub></span> measured across a known load
       <span class="mono">R<sub>load</sub></span>:</p>
     <pre>R_source = R_load × (V_open − V_load) / V_load</pre>
-    <p>So a point reading 12&nbsp;V in the centre position and 6&nbsp;V in the 100&nbsp;kΩ position
+    <p>So a point reading 12&nbsp;V in the center position and 6&nbsp;V in the 100&nbsp;kΩ position
       has a source impedance of 100&nbsp;kΩ&nbsp;×&nbsp;(12−6)/6 = <strong>100&nbsp;kΩ</strong>. A point that
       reads 2&nbsp;V open and 20&nbsp;mV loaded is sitting behind roughly 10&nbsp;MΩ — that is
       coupling, not a supply.</p>
-    <p class="small">The maths assumes the centre-position reading is the true open-circuit voltage.
+    <p class="small">The math assumes the center-position reading is the true open-circuit voltage.
       Once the source impedance climbs into the megohms, your meter's own 10&nbsp;MΩ is loading it
       too, and the calculated value reads low. For that range, treat the result as a lower bound.</p>
 
@@ -299,7 +301,7 @@
     <div class="callout">
       <p><strong>It also changes your meter's other modes.</strong> In the 100&nbsp;kΩ position an
         ohmmeter reads 100&nbsp;kΩ and a continuity test sees a resistor rather than your circuit.
-        Centre the switch for Ω, continuity, diode and current modes.</p>
+        Center the switch for Ω, continuity, diode and current modes.</p>
     </div>
   </div>
 </section>
@@ -342,7 +344,7 @@
       <li><strong>Quiet mode, no tools:</strong> hold the probe tips together (or clip them)
         <em>while flipping the power switch on</em> — audio stays muted until the next power
         cycle. The LED continues to work normally.</li>
-      <li>Every beep behaviour — including disabling the buzzer permanently — is reconfigurable
+      <li>Every beep behavior — including disabling the buzzer permanently — is reconfigurable
         over USB; see the <a href="firmware-manual.html">firmware manual</a>.</li>
     </ul>
   </div>
@@ -393,7 +395,7 @@
         source resistance, so probing any real circuit pins the reading to the true value.</li>
       <li><strong>It disappears during real measurements.</strong> The instant a voltage is
         detected, the bridge stops toggling entirely.</li>
-      <li><strong>It's removable.</strong> Centre the toggle and the detector is galvanically
+      <li><strong>It's removable.</strong> Center the toggle and the detector is galvanically
         gone — the meter reads exactly as it would bare.</li>
       <li><strong>You can prove it's ghost voltage.</strong> Switch to the 100&nbsp;kΩ position: a
         coupled voltage collapses under that load, a real one barely moves. See
@@ -448,13 +450,13 @@
         <strong>5 days</strong> of normal working use, but only about <strong>24 hours</strong> if
         the leads are left connected to something so the unit never gets to rest. Leaving it awake
         costs far more than leaving it switched on.</li>
-      <li><strong>Zero drain when off:</strong> the centre position disconnects the battery
+      <li><strong>Zero drain when off:</strong> the center position disconnects the battery
         outright, so a switched-off unit holds its charge indefinitely. The 100&nbsp;kΩ position
         leaves the battery disconnected too — it is a passive load, and draws nothing from the
         cell.</li>
       <li><strong>Charging — the toggle must be toward the meter:</strong> plug a USB-C cable into
         the port on the unit <em>with the switch in the on position</em>. The same switch poles that
-        make the centre position fully inert also disconnect the battery from the charger, so a
+        make the center position fully inert also disconnect the battery from the charger, so a
         switched-off unit ignores USB power entirely. While charging, the LED shows a slow dim-red blink, switching to a
         slow green blink when the battery is effectively full.</li>
       <li><strong>Don't use it while charging.</strong> Detection alerts (LED and beeper) are
@@ -514,7 +516,7 @@
       <tbody>
         <tr><td>Meter shows a few mV with nothing connected</td>
             <td>Normal <a href="#ghost">ghost voltage</a> while the detector is on and the leads
-                are open. It vanishes on any real measurement; centre the toggle to remove it
+                are open. It vanishes on any real measurement; center the toggle to remove it
                 entirely.</td></tr>
         <tr><td>No LED activity at power-on</td>
             <td>Battery is empty — charge over USB-C. (A single green power-on blink means it was
@@ -524,18 +526,18 @@
                 charging (USB supply noise causes false alerts, and the cable can earth-ground
                 your meter). Unplug to resume working.</td></tr>
         <tr><td>Plugged into USB but the battery won't charge</td>
-            <td>The toggle must be toward the meter to charge — the centre and 100&nbsp;kΩ positions
+            <td>The toggle must be toward the meter to charge — the center and 100&nbsp;kΩ positions
                 both disconnect the battery from the charger as well as from the meter.</td></tr>
         <tr><td>Meter reads 100&nbsp;kΩ on every resistance measurement</td>
             <td>The toggle is in the far position, which puts a 100&nbsp;kΩ test load across your
-                probes. Centre it. See <a href="#toggle">section 3</a>.</td></tr>
+                probes. Center it. See <a href="#toggle">section 3</a>.</td></tr>
         <tr><td>No beeps, LED works</td>
             <td>Audio was muted for this session (leads were touching at power-on) — power-cycle
                 with the leads apart. If it was disabled permanently via configuration, re-enable
                 it (<code>!SET,BEEP,1</code> + <code>!SAVE</code>).</td></tr>
         <tr><td>False voltage alerts when I move the leads on a dead circuit</td>
             <td>Low battery. Below about 3.6&nbsp;V the voltage detector gets twitchy enough that
-                lead movement alone sets it off. Charge it; the behaviour goes away. See
+                lead movement alone sets it off. Charge it; the behavior goes away. See
                 <a href="#power">section 8</a>.</td></tr>
         <tr><td>"Closed" on a part I know is isolated</td>
             <td>Almost certainly a reactive path — capacitor or transformer interwinding
@@ -559,7 +561,7 @@
   <div class="wrap">
     <div class="eyebrow">11 &middot; Advanced</div>
     <h2>Configuration over USB</h2>
-    <p>Every behavioural setting — the four sensitivity thresholds, beep pitches and patterns, LED
+    <p>Every behavioral setting — the four sensitivity thresholds, beep pitches and patterns, LED
       brightness and flash timing, detection timing, how aggressively the unit sleeps, battery
       calibration — is stored in on-board EEPROM and can be changed permanently over the USB-C port
       with simple text commands (or the companion desktop app), no reflashing required. The complete

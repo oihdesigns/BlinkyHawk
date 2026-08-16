@@ -120,7 +120,7 @@
       unit over USB serial without touching the code.</p>
     <p class="lede">The Blinky Hawk continuously answers one question: <em>are my leads actually
       connected to anything?</em> It flashes and beeps for continuity, warns on live voltage, and
-      every behavioural knob — thresholds, beeper, timings — is stored in on-chip EEPROM and
+      every behavioral knob — thresholds, beeper, timings — is stored in on-chip EEPROM and
       adjustable with plain-text serial commands.</p>
 
     <div class="toc">
@@ -224,7 +224,7 @@
                 after the MOSFET switches off, and threshold its magnitude.</td></tr>
         <tr><td class="mono">1 — time-to-return</td><td>recovery time</td><td>milliseconds</td>
             <td>Sample the recovery and measure how long the differential takes to fall back within
-                <code>DETBAND</code> of the resting centre. Longer = more open. Naturally tolerant of
+                <code>DETBAND</code> of the resting center. Longer = more open. Naturally tolerant of
                 unit-to-unit gain differences, since it measures a time constant rather than an
                 amplitude.</td></tr>
         <tr><td class="mono">2 — area</td><td>tail integral</td><td>volt·milliseconds</td>
@@ -253,7 +253,7 @@
 <section id="indicators">
   <div class="wrap">
     <div class="eyebrow">3 &middot; Indicators</div>
-    <h2>LED &amp; speaker behaviour</h2>
+    <h2>LED &amp; speaker behavior</h2>
 
     <h3>LED states</h3>
     <div class="tablewrap"><table>
@@ -559,7 +559,7 @@ $DIP,0,0.1500</span>
     <div class="tablewrap"><table>
       <thead><tr><th>Key</th><th>Type</th><th>Default</th><th>Range</th><th>What it controls</th></tr></thead>
       <tbody>
-        <tr><td><code>REFCENTER</code></td><td>volts</td><td>0.018</td><td>&minus;1 … 1</td><td>Resting differential centre. Voltage detection measures deviation from this point.</td></tr>
+        <tr><td><code>REFCENTER</code></td><td>volts</td><td>0.018</td><td>&minus;1 … 1</td><td>Resting differential center. Voltage detection measures deviation from this point.</td></tr>
         <tr><td><code>REFBAND</code></td><td>volts</td><td>0.025</td><td>0.001 … 1</td><td>Half-width of the "no voltage present" window around <code>REFCENTER</code>.</td></tr>
         <tr><td><code>THRESHSEL</code></td><td>0–3</td><td>3</td><td>0 … 3</td><td>Which threshold slot is active: 0&nbsp;=&nbsp;<code>THRESH00</code>, 1&nbsp;=&nbsp;<code>THRESH01</code>, 2&nbsp;=&nbsp;<code>THRESH10</code>, 3&nbsp;=&nbsp;<code>THRESH11</code>. Takes effect on the next detection pass. Ignored on a V2 board, where the DIP switches decide.</td></tr>
         <tr><td><code>THRESH00</code></td><td>units*</td><td>0.15</td><td>0.001 … 3.3</td><td>Open/closed threshold for slot 00 (<code>THRESHSEL</code>&nbsp;0) — the most sensitive setting.</td></tr>
@@ -567,7 +567,7 @@ $DIP,0,0.1500</span>
         <tr><td><code>THRESH10</code></td><td>units*</td><td>0.45</td><td>0.001 … 3.3</td><td>Threshold for slot 10 (<code>THRESHSEL</code>&nbsp;2) — the factory setting.</td></tr>
         <tr><td><code>THRESH11</code></td><td>units*</td><td>1.00</td><td>0.001 … 3.3</td><td>Threshold for slot 11 (<code>THRESHSEL</code>&nbsp;3) — the least sensitive setting.</td></tr>
         <tr><td><code>DETMETHOD</code></td><td>0/1/2</td><td>1</td><td>0 … 2</td><td>Detection method: 0 = single reading (volts), 1 = time-to-return (ms), 2 = tail area (V·ms). See <a href="#detection">section 2</a>. Changing this changes the units of the <code>THRESH</code> keys.</td></tr>
-        <tr><td><code>DETBAND</code></td><td>volts</td><td>0.05</td><td>0.005 … 1</td><td>Method&nbsp;1 only: the differential is "returned" once it comes back within this band of the resting centre.</td></tr>
+        <tr><td><code>DETBAND</code></td><td>volts</td><td>0.05</td><td>0.005 … 1</td><td>Method&nbsp;1 only: the differential is "returned" once it comes back within this band of the resting center.</td></tr>
         <tr><td><code>DETWINUS</code></td><td>µs</td><td>1500</td><td>200 … 5000</td><td>Methods&nbsp;1&nbsp;&amp;&nbsp;2: maximum recovery-sampling window. Also the timeout — if the differential never returns, the metric maxes out (reads as fully open).</td></tr>
         <tr><td><code>DETAREAUS</code></td><td>µs</td><td>400</td><td>0 … 5000</td><td>Method&nbsp;2 only: where the area integration starts, measured from the MOSFET-off instant. Skips the common initial dip so only the discriminating tail is integrated.</td></tr>
         <tr><td><code>VOLTFAST</code></td><td>multiplier</td><td>5.0</td><td>1 … 50</td><td>A single reading beyond <code>VOLTFAST</code>&times;<code>REFBAND</code> declares voltage instantly (no averaging).</td></tr>
@@ -584,7 +584,7 @@ $DIP,0,0.1500</span>
       volts when method&nbsp;0, milliseconds when method&nbsp;1, volt·milliseconds when method&nbsp;2.
       The unit ships on method&nbsp;1, so <strong><code>THRESH11</code>'s 1.00 default is
       1.00&nbsp;ms</strong>. Slots 00–10 still carry their old method-0 <em>volt</em> figures and
-      have not been re-characterised for method&nbsp;1 — only slot&nbsp;11, the factory selection, is
+      have not been re-characterized for method&nbsp;1 — only slot&nbsp;11, the factory selection, is
       a bench-tuned value. Re-tune a slot before relying on it.</p>
 
     <h3>Alerts</h3>
@@ -650,7 +650,7 @@ $DIP,0,0.1500</span>
     </div>
 
     <h3>Low power</h3>
-    <p>Behaviour is described in <a href="#lowpower">section 5</a>.</p>
+    <p>Behavior is described in <a href="#lowpower">section 5</a>.</p>
     <div class="tablewrap"><table>
       <thead><tr><th>Key</th><th>Type</th><th>Default</th><th>Range</th><th>What it controls</th></tr></thead>
       <tbody>
@@ -729,7 +729,7 @@ $DIP,0,0.1500</span>
       <li><code>!CAP,5</code> performs a microsecond-resolution capture of both ADC channels
         across a MOSFET toggle (5&nbsp;ms window here) and dumps the buffer — ideal for plotting
         the discharge transient that the open/closed threshold discriminates.</li>
-      <li><code>!VMODE,2</code> disables the voltage-present bypass while characterising the
+      <li><code>!VMODE,2</code> disables the voltage-present bypass while characterizing the
         open/closed test (remember to restore <code>!VMODE,0</code>).</li>
     </ul>
     <p><code>!DIAG,0</code> exits and clears the streaming/MOSFET overrides.</p>
@@ -756,7 +756,7 @@ $DIP,0,0.0200</span>
 !SAVE
 <span class="tx">$OK,save</span></pre>
 
-    <h3>Shift the resting centre after a hardware change</h3>
+    <h3>Shift the resting center after a hardware change</h3>
     <pre>!SET,REFCENTER,-0.005
 <span class="tx">$CFG,REFCENTER,-0.0050</span>
 !SET,REFBAND,0.03
@@ -844,7 +844,7 @@ $OK,sn</span>                 <span class="c">// written to EEPROM immediately; 
         <tr><td>Speaker, "hot" leg</td><td>D9</td><td>Passive or active buzzer (<code>PASSIVE</code> key).</td></tr>
         <tr><td>Speaker, anti-phase leg</td><td>D8</td><td>V3: the piezo sits across D8/D9 and is driven differentially (<code>SPKDIFF</code>). V2: this pin is a DIP-switch input instead — see <a href="#hwrev2">the appendix</a>.</td></tr>
         <tr><td>D10</td><td>—</td><td>V3: no connection, parked as an output low. V2: DIP-switch second digit.</td></tr>
-        <tr><td>Status LED</td><td>LED1 on the PCB (SK6812, data pin&nbsp;6)</td><td>Colours are compile-time; brightness, flash length and rate caps are configurable per state. On V3, LED1 is wired straight to the battery rail and cannot be power-gated, so its quiescent draw is a hardware floor rather than something the firmware can park.</td></tr>
+        <tr><td>Status LED</td><td>LED1 on the PCB (SK6812, data pin&nbsp;6)</td><td>Colors are compile-time; brightness, flash length and rate caps are configurable per state. On V3, LED1 is wired straight to the battery rail and cannot be power-gated, so its quiescent draw is a hardware floor rather than something the firmware can park.</td></tr>
         <tr><td>USB / charge sense</td><td>A3</td><td>Reads VBUS/2 through a divider.</td></tr>
         <tr><td>Battery sense</td><td>BAT_DET / BAT_READ_EN</td><td>Onboard Vbatt/2 divider, gated by the enable pin.</td></tr>
         <tr><td>Serial</td><td>USB-CDC, 115200 baud</td><td>Line-based text protocol (<a href="#serial">section 6</a>).</td></tr>
