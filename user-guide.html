@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Blinky Hawk User Guide — Setup, Indicators &amp; Everyday Use | OIH Designs</title>
-<meta name="description" content="How to install and use the Blinky Hawk open-lead detector: hookup to your meter, the power/isolation toggle, reading the LED and beeps, sensitivity DIP switches, charging, safety, and troubleshooting.">
+<meta name="description" content="How to install and use the Blinky Hawk open-lead detector: hookup to your meter, the three-position toggle and its 100 kΩ source-impedance test load, reading the LED and beeps, sensitivity settings, battery life and charging, safety, and troubleshooting.">
 <style>
   :root{
     --accent:#0b6fb8; --accent-dark:#095a94; --ink:#1b2a3a; --muted:#5b6b7a;
@@ -61,6 +61,9 @@
     background:var(--bg-alt); border:1px solid var(--grid); border-radius:5px;
     padding:1px 6px; white-space:nowrap;}
   td code{background:#eef4fa;}
+  pre{font-family:Consolas,"Cascadia Mono",Menlo,monospace; font-size:.95rem;
+    background:var(--bg-ink); color:#dfe9f2; border-radius:10px; padding:16px 22px;
+    overflow-x:auto; line-height:1.55; text-align:center;}
 
   .callout{border-left:5px solid var(--accent); background:var(--bg-alt);
     padding:14px 22px; border-radius:0 10px 10px 0; margin:18px 0;}
@@ -131,11 +134,11 @@
       <ol>
         <li><a href="#what">What it does</a></li>
         <li><a href="#quickstart">Quick start</a></li>
-        <li><a href="#toggle">The power / isolation toggle</a></li>
+        <li><a href="#toggle">The toggle &amp; the 100 kΩ test load</a></li>
         <li><a href="#indicators">LED &amp; beep reference</a></li>
         <li><a href="#results">Interpreting results</a></li>
         <li><a href="#ghost">About ghost voltage</a></li>
-        <li><a href="#dip">Sensitivity DIP switches</a></li>
+        <li><a href="#sensitivity">Sensitivity</a></li>
         <li><a href="#power">Battery &amp; charging</a></li>
         <li><a href="#safety">Safety</a></li>
         <li><a href="#troubleshooting">Troubleshooting / FAQ</a></li>
@@ -185,8 +188,10 @@
         voltage measurements.</li>
       <li><strong>Plug your test leads into the back of Blinky Hawk's plugs.</strong> The
         connection is purely parallel: your probes, your meter, and your workflow are unchanged.</li>
-      <li><strong>Flip the toggle switch ON.</strong> This one switch both powers the unit and
-        connects it to the measurement path (<a href="#toggle">details below</a>).</li>
+      <li><strong>Flip the toggle toward the meter.</strong> That one position both powers the unit
+        and connects it to the measurement path. The switch has three positions — centre is off, and
+        the far side is a test load rather than a second on (<a href="#toggle">details
+        below</a>).</li>
       <li><strong>Watch the power-on cue.</strong> The LED blinks green 1–4 times to report the
         battery level (1&nbsp;=&nbsp;0–25%, 4&nbsp;=&nbsp;75–100%).</li>
       <li><strong>Use your meter normally.</strong> Touch the probes together — green flash and a
@@ -207,26 +212,98 @@
 <section id="toggle">
   <div class="wrap">
     <div class="eyebrow">3 &middot; The toggle</div>
-    <h2>One switch: power <em>and</em> isolation</h2>
-    <p>The toggle is a <strong>triple-pole switch</strong>: one pole switches the battery, and the
-      other two galvanically connect/disconnect both measurement leads.</p>
+    <h2>One switch: power, isolation, and a test load</h2>
+    <p>The toggle is a <strong>triple-pole, three-position switch</strong> with a centre-off. One
+      pole switches the battery; the other two galvanically connect or disconnect both measurement
+      leads. <strong>The centre position is off</strong>, and the two ends do different things:</p>
     <div class="tablewrap"><table>
-      <thead><tr><th>Position</th><th>What it means</th></tr></thead>
+      <thead><tr><th>Position</th><th>Blinky Hawk</th><th>Across your probes</th><th>What it means</th></tr></thead>
       <tbody>
-        <tr><td><strong>ON</strong></td>
-            <td>Blinky Hawk is powered and connected across the probes. Detection runs
-                continuously; the meter may show a few millivolts of
+        <tr><td><strong>Toward the meter</strong></td><td>On</td><td>≈&nbsp;1.1&nbsp;MΩ</td>
+            <td>Normal operation. Blinky Hawk is powered and connected across the probes, detection
+                runs continuously, and the meter may show a few millivolts of
                 <a href="#ghost">ghost voltage</a> when the leads are open.</td></tr>
-        <tr><td><strong>OFF</strong></td>
+        <tr><td><strong>Centre</strong></td><td>Off</td><td>Nothing</td>
             <td>Fully inert. The battery is disconnected <em>and</em> the detector is galvanically
                 removed from the probe circuit — your meter behaves 100% stock, with zero ghost
-                voltage and zero battery drain. You can leave Blinky Hawk plugged in permanently
-                and simply switch it off when you don't want it. OFF is also the right position
-                whenever you use the meter's non-voltage modes (Ω, continuity, diode, current).
-                Note that OFF disconnects the battery from the charger too — the unit must be ON
-                to charge.</td></tr>
+                voltage and zero battery drain. You can leave Blinky Hawk fitted permanently and
+                simply centre the switch when you don't want it. This is the right position for the
+                meter's non-voltage modes (Ω, continuity, diode, current). Note that it disconnects
+                the battery from the charger too — the switch must be toward the meter to
+                charge.</td></tr>
+        <tr><td><strong>Away from the meter</strong></td><td>Off</td><td><strong>100&nbsp;kΩ</strong></td>
+            <td>Blinky Hawk stays off, but a 100&nbsp;kΩ resistor is placed across the meter's
+                inputs as a deliberate test load. See below.</td></tr>
       </tbody>
     </table></div>
+
+    <h3>The 100 kΩ position: measuring how stiff a voltage is</h3>
+    <p>A voltmeter reading tells you a voltage is present. It does not tell you whether that voltage
+      can <em>do</em> anything — whether it is a real supply or a few picofarads of coupling. The
+      difference shows up the moment you load it, and the three switch positions give you three
+      known loads without changing anything else in your setup:</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Switch</th><th>Load across the probes</th></tr></thead>
+      <tbody>
+        <tr><td>Centre (off)</td><td>Your meter alone — typically <strong>10&nbsp;MΩ</strong></td></tr>
+        <tr><td>Toward the meter</td><td><strong>1.1&nbsp;MΩ</strong> (Blinky Hawk's bridge), in parallel with the meter</td></tr>
+        <tr><td>Away from the meter</td><td><strong>100&nbsp;kΩ</strong></td></tr>
+      </tbody>
+    </table></div>
+    <p class="small">The 1.1&nbsp;MΩ is two 500&nbsp;kΩ divider legs plus a ~100&nbsp;kΩ sense
+      resistor, and it is what the probes see whenever the bridge is in its resting state — which is
+      almost always. The bridge switches off only for the brief instant of each open/closed test.</p>
+    <p>Read the same point in each position and watch what the number does:</p>
+    <ul class="clean">
+      <li><strong>Barely moves</strong> → a stiff, low-impedance source. A real supply rail, a
+        battery, an energised circuit.</li>
+      <li><strong>Sags noticeably at 1&nbsp;MΩ and collapses at 100&nbsp;kΩ</strong> → a high-impedance
+        source. A resistive divider, leakage, or a high-value pull-up.</li>
+      <li><strong>Nearly vanishes as soon as you load it at all</strong> → capacitive coupling —
+        <a href="#ghost">ghost voltage</a> from an adjacent conductor, not a source you can draw
+        from.</li>
+    </ul>
+    <p>If you want a number rather than an impression, one loaded reading is enough. With
+      <span class="mono">V<sub>open</sub></span> measured in the centre position and
+      <span class="mono">V<sub>load</sub></span> measured across a known load
+      <span class="mono">R<sub>load</sub></span>:</p>
+    <pre>R_source = R_load × (V_open − V_load) / V_load</pre>
+    <p>So a point reading 12&nbsp;V in the centre position and 6&nbsp;V in the 100&nbsp;kΩ position
+      has a source impedance of 100&nbsp;kΩ&nbsp;×&nbsp;(12−6)/6 = <strong>100&nbsp;kΩ</strong>. A point that
+      reads 2&nbsp;V open and 20&nbsp;mV loaded is sitting behind roughly 10&nbsp;MΩ — that is
+      coupling, not a supply.</p>
+    <p class="small">The maths assumes the centre-position reading is the true open-circuit voltage.
+      Once the source impedance climbs into the megohms, your meter's own 10&nbsp;MΩ is loading it
+      too, and the calculated value reads low. For that range, treat the result as a lower bound.</p>
+
+    <div class="callout warn">
+      <p><strong>The 100 kΩ position is for low-voltage work only.</strong> Two reasons. First, it
+        is a deliberate load on the circuit under test — that is the whole point of it, but never
+        leave the switch there for normal work, and think before using it on anything delicate.
+        Second, the resistor has to dissipate <span class="mono">V²/100&nbsp;kΩ</span>, which climbs
+        quickly:</p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Across the probes</th><th>Current drawn</th><th>Dissipated in the resistor</th></tr></thead>
+        <tbody>
+          <tr><td>12&nbsp;V</td><td>0.12&nbsp;mA</td><td>1.4&nbsp;mW</td></tr>
+          <tr><td>48&nbsp;V</td><td>0.48&nbsp;mA</td><td>23&nbsp;mW</td></tr>
+          <tr><td>110&nbsp;V</td><td>1.1&nbsp;mA</td><td>121&nbsp;mW</td></tr>
+          <tr><td>120&nbsp;V</td><td>1.2&nbsp;mA</td><td>144&nbsp;mW</td></tr>
+          <tr><td>240&nbsp;V</td><td>2.4&nbsp;mA</td><td>576&nbsp;mW</td></tr>
+        </tbody>
+      </table></div>
+      <p>The resistor currently fitted is a <strong>1/8&nbsp;W (125&nbsp;mW) part</strong>, so it
+        reaches its rating at about <strong>110&nbsp;V</strong> and is already past it at
+        120&nbsp;V mains. <strong>Keep this position well away from mains and above.</strong>
+        The part is what was on hand rather than a considered choice — the rating for the final
+        design is not settled, so do not read 110&nbsp;V as the feature's intended limit in either
+        direction.</p>
+    </div>
+    <div class="callout">
+      <p><strong>It also changes your meter's other modes.</strong> In the 100&nbsp;kΩ position an
+        ohmmeter reads 100&nbsp;kΩ and a continuity test sees a resistor rather than your circuit.
+        Centre the switch for Ω, continuity, diode and current modes.</p>
+    </div>
   </div>
 </section>
 
@@ -319,36 +396,44 @@
         source resistance, so probing any real circuit pins the reading to the true value.</li>
       <li><strong>It disappears during real measurements.</strong> The instant a voltage is
         detected, the bridge stops toggling entirely.</li>
-      <li><strong>It's removable.</strong> Flip the toggle OFF and the detector is galvanically
+      <li><strong>It's removable.</strong> Centre the toggle and the detector is galvanically
         gone — the meter reads exactly as it would bare.</li>
-      <li>Higher <a href="#dip">sensitivity settings</a> use more bridge resistance, which
+      <li><strong>You can prove it's ghost voltage.</strong> Switch to the 100&nbsp;kΩ position: a
+        coupled voltage collapses under that load, a real one barely moves. See
+        <a href="#toggle">section 3</a>.</li>
+      <li>Higher <a href="#sensitivity">sensitivity settings</a> use more bridge resistance, which
         increases ghost voltage slightly; the factory setting is chosen to keep it minimal.</li>
     </ul>
   </div>
 </section>
 
-<section id="dip">
+<section id="sensitivity">
+  <span id="dip"></span>
   <div class="wrap">
     <div class="eyebrow">7 &middot; Sensitivity</div>
-    <h2>The DIP switches (most users can skip this)</h2>
+    <h2>Sensitivity (most users can skip this)</h2>
     <p>Under the hood, sensitivity is a genuine tradeoff: more bridge resistance produces a
       stronger detection signal (better discrimination of high-resistance circuits) but slightly
-      more <a href="#ghost">ghost voltage</a> on the host meter. A small 4-way DIP switch on the
-      board lets you pick where on that tradeoff you sit.</p>
+      more <a href="#ghost">ghost voltage</a> on the host meter. Your unit is calibrated and set at
+      the factory, and <strong>most users should simply leave it alone.</strong></p>
     <ul class="clean">
-      <li>The four switches work as <strong>two pairs that must move together</strong>: one pair
-        physically changes the bridge resistance, the other pair tells the firmware which
-        calibrated detection threshold to use. <strong>The correct pairing is printed on the PCB
-        next to the switch</strong> — always flip a resistance switch together with its marked
-        firmware partner.</li>
-      <li>The factory setting is position <strong>10</strong>, tuned for everyday use with minimal
-        ghost voltage. <strong>Most users should leave it there.</strong></li>
-      <li>Changes take effect immediately — no reboot, no reprogramming. The unit reports the new
-        position over USB serial if connected.</li>
-      <li>The detection threshold behind each switch position is itself reprogrammable over USB,
-        so a position can be re-purposed for a specific application — see the
-        <a href="firmware-manual.html#dip">firmware manual</a>.</li>
+      <li>The unit stores <strong>four sensitivity settings</strong> and uses one of them. The
+        factory choice is tuned for everyday use with minimal ghost voltage.</li>
+      <li>There is <strong>nothing to adjust on the outside of the unit</strong> — no switch, no
+        dial. Changing the setting means connecting it to a computer over USB and sending one
+        command, which takes effect immediately with no reboot or reprogramming.</li>
+      <li>What each of the four settings <em>means</em> is itself reprogrammable, so one can be
+        re-purposed for a specific application. Both are covered in the
+        <a href="firmware-manual.html#thresholds">firmware manual</a>.</li>
     </ul>
+    <div class="callout">
+      <p><strong>Early unit with DIP switches?</strong> A single pre-production unit has a 4-way DIP
+        switch on the board for this instead. If yours is that one, the switches work as two pairs
+        that must move together — the correct pairing is printed on the PCB next to the switch, and
+        the factory position is <strong>10</strong>. See the
+        <a href="firmware-manual.html#hwrev2">hardware revision 2 appendix</a> in the firmware
+        manual.</p>
+    </div>
   </div>
 </section>
 
@@ -357,16 +442,23 @@
     <div class="eyebrow">8 &middot; Power</div>
     <h2>Battery &amp; charging</h2>
     <ul class="clean">
-      <li><strong>Battery:</strong> internal single-cell rechargeable lithium battery. (Final
-        capacity is still being selected — expect roughly 150–450&nbsp;mAh, which at Blinky Hawk's
-        ~11&nbsp;mA draw works out to very roughly <strong>13–40 hours of continuous ON
-        time</strong>.)</li>
-      <li><strong>Zero drain when OFF:</strong> the toggle disconnects the battery outright, so a
-        switched-off unit holds its charge indefinitely.</li>
-      <li><strong>Charging — the toggle must be ON:</strong> plug a USB-C cable into the port on
-        the unit <em>with the switch in the ON position</em>. The same switch poles that make OFF
-        fully inert also disconnect the battery from the charger, so a switched-off unit ignores
-        USB power entirely. While charging, the LED shows a slow dim-red blink, switching to a
+      <li><strong>Battery:</strong> internal 320&nbsp;mAh single-cell rechargeable lithium
+        battery.</li>
+      <li><strong>Runtime — roughly 5 days of ordinary use.</strong> Blinky Hawk spends almost all
+        of its time in a low-power state, waking about sixteen times a second to check the leads,
+        and it drops into that state about a second after the leads go open. Average draw is around
+        2&nbsp;mA that way, against about 11&nbsp;mA fully awake — so a charge lasts on the order of
+        <strong>5 days</strong> of normal working use, but only about <strong>24 hours</strong> if
+        the leads are left connected to something so the unit never gets to rest. Leaving it awake
+        costs far more than leaving it switched on.</li>
+      <li><strong>Zero drain when off:</strong> the centre position disconnects the battery
+        outright, so a switched-off unit holds its charge indefinitely. The 100&nbsp;kΩ position
+        leaves the battery disconnected too — it is a passive load, and draws nothing from the
+        cell.</li>
+      <li><strong>Charging — the toggle must be toward the meter:</strong> plug a USB-C cable into
+        the port on the unit <em>with the switch in the on position</em>. The same switch poles that
+        make the centre position fully inert also disconnect the battery from the charger, so a
+        switched-off unit ignores USB power entirely. While charging, the LED shows a slow dim-red blink, switching to a
         slow green blink when the battery is effectively full.</li>
       <li><strong>Don't use it while charging.</strong> Detection alerts (LED and beeper) are
         deliberately disabled whenever USB power is present, for two reasons: many USB power
@@ -377,7 +469,14 @@
         <a href="firmware-manual.html">firmware manual</a> — but the same noise and grounding
         caveats apply.)</li>
       <li><strong>Power-on battery gauge:</strong> the 1–4 green blinks at every power-up are your
-        fuel gauge; one blink means it's time to charge.</li>
+        fuel gauge; one blink means it's time to charge. The gauge reads empty at 3.7&nbsp;V, which
+        is deliberately above the point where the cell is actually flat — see below for why.</li>
+      <li><strong>A low battery announces itself as false alerts.</strong> Below about 3.6&nbsp;V
+        the detector's internal reference drifts far enough that simply <em>moving the leads</em>
+        can trigger a voltage alert on a dead circuit. So: <strong>if Blinky Hawk starts calling
+        voltage when you wiggle the leads, charge it</strong> — that is a flat battery talking, not
+        your circuit. This is why the gauge is calibrated to read empty while there is still charge
+        left in the cell: "empty" means "stop trusting it", not "it is about to switch off".</li>
     </ul>
   </div>
 </section>
@@ -418,7 +517,7 @@
       <tbody>
         <tr><td>Meter shows a few mV with nothing connected</td>
             <td>Normal <a href="#ghost">ghost voltage</a> while the detector is on and the leads
-                are open. It vanishes on any real measurement; flip the toggle OFF to remove it
+                are open. It vanishes on any real measurement; centre the toggle to remove it
                 entirely.</td></tr>
         <tr><td>No LED activity at power-on</td>
             <td>Battery is empty — charge over USB-C. (A single green power-on blink means it was
@@ -428,22 +527,30 @@
                 charging (USB supply noise causes false alerts, and the cable can earth-ground
                 your meter). Unplug to resume working.</td></tr>
         <tr><td>Plugged into USB but the battery won't charge</td>
-            <td>The toggle must be ON to charge — switching OFF disconnects the battery from the
-                charger as well as from the meter.</td></tr>
+            <td>The toggle must be toward the meter to charge — the centre and 100&nbsp;kΩ positions
+                both disconnect the battery from the charger as well as from the meter.</td></tr>
+        <tr><td>Meter reads 100&nbsp;kΩ on every resistance measurement</td>
+            <td>The toggle is in the far position, which puts a 100&nbsp;kΩ test load across your
+                probes. Centre it. See <a href="#toggle">section 3</a>.</td></tr>
         <tr><td>No beeps, LED works</td>
             <td>Audio was muted for this session (leads were touching at power-on) — power-cycle
                 with the leads apart. If it was disabled permanently via configuration, re-enable
                 it (<code>!SET,BEEP,1</code> + <code>!SAVE</code>).</td></tr>
+        <tr><td>False voltage alerts when I move the leads on a dead circuit</td>
+            <td>Low battery. Below about 3.6&nbsp;V the voltage detector gets twitchy enough that
+                lead movement alone sets it off. Charge it; the behaviour goes away. See
+                <a href="#power">section 8</a>.</td></tr>
         <tr><td>"Closed" on a part I know is isolated</td>
             <td>Almost certainly a reactive path — capacitor or transformer interwinding
                 capacitance. See the limitation note in <a href="#results">section 5</a>.</td></tr>
         <tr><td>Detection seems too eager / not eager enough</td>
-            <td>Try a different <a href="#dip">DIP position</a> (flip the marked pairs together),
-                or retune the thresholds over USB per the
+            <td>Try one of the other three <a href="#sensitivity">sensitivity settings</a>, or
+                retune the thresholds, over USB per the
                 <a href="firmware-manual.html">firmware manual</a>.</td></tr>
         <tr><td>Meter reads normally but no open/closed verdicts, LED blue</td>
             <td>Check that both banana plugs are fully seated in the meter's V/COM jacks and the
-                toggle is ON — with the detector isolated the leads always look open.</td></tr>
+                toggle is toward the meter — with the detector isolated the leads always look
+                open.</td></tr>
       </tbody>
     </table></div>
     <p>Stuck on something not listed here? Email
@@ -455,11 +562,11 @@
   <div class="wrap">
     <div class="eyebrow">11 &middot; Advanced</div>
     <h2>Configuration over USB</h2>
-    <p>Every behavioural setting — the four DIP thresholds, beep pitches and patterns, LED
-      enables, detection timing, battery calibration — is stored in on-board EEPROM and can be
-      changed permanently over the USB-C port with simple text commands (or the companion desktop
-      app), no reflashing required. The complete reference, including a serial-protocol table and
-      step-by-step recipes, is the
+    <p>Every behavioural setting — the four sensitivity thresholds, beep pitches and patterns, LED
+      brightness and flash timing, detection timing, how aggressively the unit sleeps, battery
+      calibration — is stored in on-board EEPROM and can be changed permanently over the USB-C port
+      with simple text commands (or the companion desktop app), no reflashing required. The complete
+      reference, including a serial-protocol table and step-by-step recipes, is the
       <a href="firmware-manual.html"><strong>Blinky Hawk firmware manual</strong></a>.</p>
   </div>
 </section>

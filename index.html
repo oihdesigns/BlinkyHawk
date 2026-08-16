@@ -322,7 +322,7 @@
           <tr><td><strong>Permanent sense-divider</strong></td><td>1 MΩ</td><td>0.2 MΩ</td></tr>
           <tr><td><strong>Ghost voltage on host DMM</strong></td><td>−170 mV</td><td>−5 mV DC (~80 mV AC)</td></tr>
           <tr><td><strong>Signal differentiation</strong> (10 M → short)</td><td>~340 mV</td><td>~10 mV</td></tr>
-          <tr><td><strong>Power draw</strong></td><td>—</td><td>11 mA off battery</td></tr>
+          <tr><td><strong>Power draw</strong></td><td>—</td><td>~2 mA idle (low-power polling), 11 mA awake</td></tr>
         </tbody>
       </table>
     </div>
@@ -447,7 +447,7 @@
 <!-- ROADMAP -->
 <section id="tunable" class="alt">
   <div class="wrap">
-    <span class="eyebrow">Planned change</span>
+    <span class="eyebrow">Design note</span>
     <h2>User-tunable sensitivity</h2>
     <p>Blinky&nbsp;Hawk's sensitivity is a genuine tradeoff: raising the
       <strong>permanent series resistance</strong> in the bridge grows the detection signal — and the spread
@@ -463,14 +463,14 @@
         <figcaption>The bench proof-of-concept — with a bulky panel dial.</figcaption>
       </figure>
     </div>
-    <p>That proof-of-concept used a panel-mount dial — it works, but it's bulky. The shipping design replaces it
-      with a small <strong>4-way DIP switch</strong> on the board: two positions bypass resistors to set the
-      bridge resistance (~200&nbsp;kΩ–1.7&nbsp;MΩ), and two more are wired to the microcontroller so the board
-      knows the setting — you retune by flipping switches, with <strong>no reprogramming</strong>. The shipping
-      version also adds an <strong>optional buzzer</strong> for audio alerts when you don't have eyes on the LED.</p>
-    <p>Every threshold, beep, and timing behind those switches is stored in on-board EEPROM and adjustable over
-      USB serial — what each DIP position <em>means</em> can be re-programmed per unit. The full command and
-      configuration reference lives in the <a href="firmware-manual.html"><strong>Blinky Hawk firmware
+    <p>That proof-of-concept used a panel-mount dial — it works, but it's bulky. An intermediate board replaced it
+      with a small 4-way DIP switch. The shipping design drops the switch too: the bridge resistance is set on the
+      board and the unit carries <strong>four calibrated sensitivity settings</strong>, selected with a single
+      command over USB and taking effect immediately, with <strong>no reprogramming</strong>. Every unit also ships
+      with a <strong>buzzer</strong> for audio alerts when you don't have eyes on the LED.</p>
+    <p>Every threshold, beep, LED timing and sleep behaviour is stored in on-board EEPROM and adjustable over
+      USB serial — what each of the four settings <em>means</em> can be re-programmed per unit. The full command
+      and configuration reference lives in the <a href="firmware-manual.html"><strong>Blinky Hawk firmware
       manual</strong></a>.</p>
   </div>
 </section>

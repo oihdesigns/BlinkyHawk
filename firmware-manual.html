@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Blinky Hawk Firmware Manual — Configuration &amp; Serial Reference | OIH Designs</title>
-<meta name="description" content="End-user manual for the Blinky Hawk (XIAO RA4M1) open-lead-detector firmware: how detection works, DIP-switch threshold selection, and the full EEPROM configuration / serial command reference.">
+<meta name="description" content="End-user manual for the Blinky Hawk (XIAO RA4M1) open-lead-detector firmware: how detection works, threshold selection, the low-power sleep mode, and the full EEPROM configuration / serial command reference.">
 <style>
   :root{
     --accent:#0b6fb8; --accent-dark:#095a94; --ink:#1b2a3a; --muted:#5b6b7a;
@@ -101,7 +101,8 @@
     <div class="links">
       <a href="#detection">Detection</a>
       <a href="#indicators">Indicators</a>
-      <a href="#dip">DIP&nbsp;Switches</a>
+      <a href="#thresholds">Thresholds</a>
+      <a href="#lowpower">Low&nbsp;power</a>
       <a href="#serial">Serial</a>
       <a href="#config">Config&nbsp;Keys</a>
       <a href="user-guide.html">User&nbsp;guide</a>
@@ -112,7 +113,7 @@
 
 <section class="hero">
   <div class="wrap">
-    <span class="badge">Firmware: BlinkyHawk_RA4M1 &middot; config v2</span>
+    <span class="badge">Firmware: BlinkyHawk_RA4M1 &middot; config v7 &middot; board rev&nbsp;V3</span>
     <div class="eyebrow">End-User Documentation</div>
     <h1>Blinky Hawk Firmware Manual</h1>
     <p class="sub">How the open-lead detector firmware works — and how to reconfigure a shipped
@@ -128,14 +129,23 @@
         <li><a href="#overview">Overview &amp; states</a></li>
         <li><a href="#detection">How detection works</a></li>
         <li><a href="#indicators">LED &amp; speaker indicators</a></li>
-        <li><a href="#dip">DIP-switch threshold select</a></li>
+        <li><a href="#thresholds">Threshold selection</a></li>
+        <li><a href="#lowpower">Low-power sleep mode</a></li>
         <li><a href="#serial">Serial interface &amp; commands</a></li>
         <li><a href="#config">Configuration key reference</a></li>
         <li><a href="#eeprom">How EEPROM storage works</a></li>
         <li><a href="#diag">Diagnostic mode</a></li>
         <li><a href="#recipes">Common recipes</a></li>
         <li><a href="#fixed">Fixed (compile-time) hardware map</a></li>
+        <li><a href="#hwrev2">Appendix: hardware revision 2</a></li>
       </ol>
+    </div>
+
+    <div class="callout">
+      <p><strong>This manual describes a hardware revision&nbsp;3 board</strong>, which is what every
+        current unit is. Revision&nbsp;2 differs in two visible ways — it has DIP switches, and its
+        buzzer is wired differently — and exactly one V2 unit exists. If you have it, read
+        <a href="#hwrev2">the appendix</a>; everything else here applies to both.</p>
     </div>
   </div>
 </section>
@@ -190,8 +200,8 @@
         is skipped entirely.</li>
       <li><strong>Open/closed test.</strong> The MOSFET switches OFF and the firmware derives an
         open/closed <em>metric</em> from the front end (the exact method is selectable — see below),
-        then the MOSFET returns ON. If the metric exceeds the <em>active threshold</em> (set by the
-        DIP switches — next section) the leads are FLOATING; otherwise they are CLOSED. The test can
+        then the MOSFET returns ON. If the metric exceeds the <em>active threshold</em> (one of four
+        stored values — next section) the leads are FLOATING; otherwise they are CLOSED. The test can
         be required to agree <code>TESTAGREE</code> times in a row before it counts.</li>
       <li><strong>Debounce.</strong> A newly detected state must repeat for
         <code>STABLECOUNT</code> consecutive passes before the LED/speaker switch to it, so a
@@ -204,7 +214,7 @@
       depends on the impedance across the leads — a dead short snaps back quickly, an open lead
       drifts back slowly. The <code>DETMETHOD</code> key selects how that recovery is turned into a
       single number to compare against the threshold. In every method a <strong>larger metric means
-      more open</strong>, so the DIP threshold table and the comparison work the same way for all
+      more open</strong>, so the threshold table and the comparison work the same way for all
       three:</p>
     <div class="tablewrap"><table>
       <thead><tr><th><code>DETMETHOD</code></th><th>Metric</th><th>Threshold units</th><th>How it works</th></tr></thead>
@@ -235,7 +245,7 @@
     <div class="callout">
       <p><strong>Everything in <code>CODE-LIKE</code> type above is an EEPROM configuration
         key.</strong> The full reference, including defaults and allowed ranges, is in
-        <a href="#config">section 6</a>.</p>
+        <a href="#config">section 7</a>.</p>
     </div>
   </div>
 </section>
@@ -278,39 +288,155 @@
   </div>
 </section>
 
-<section id="dip" class="alt">
+<section id="thresholds" class="alt">
+  <span id="dip"></span>
   <div class="wrap">
     <div class="eyebrow">4 &middot; Threshold Select</div>
-    <h2>DIP-switch threshold selection</h2>
-    <p>Two DIP switches (on pins D8 and D10) select which of <strong>four stored thresholds</strong>
-      the open/closed test uses. Each pin has a pull-up and the switch shorts it to ground, so a
-      switch that is <strong>ON reads 0</strong> and one that is <strong>OFF reads 1</strong>. The
-      position code below is written as the two pin readings, <em>first digit&nbsp;=&nbsp;D8,
-      second digit&nbsp;=&nbsp;D10</em>:</p>
+    <h2>Threshold selection</h2>
+    <p>The unit stores <strong>four open/closed thresholds</strong> and uses one of them at a time.
+      Which one is active is set by <code>THRESHSEL</code>, an ordinary configuration key:</p>
     <div class="tablewrap"><table>
-      <thead><tr><th>Position</th><th>D8 switch</th><th>D10 switch</th><th>Config key</th><th>Factory default</th></tr></thead>
+      <thead><tr><th><code>THRESHSEL</code></th><th>Position</th><th>Config key</th><th>Factory default</th><th>Sensitivity</th></tr></thead>
       <tbody>
-        <tr><td class="mono">00</td><td>ON</td><td>ON</td><td><code>THRESH00</code></td><td>0.15&nbsp;V</td></tr>
-        <tr><td class="mono">01</td><td>ON</td><td>OFF</td><td><code>THRESH01</code></td><td>0.54&nbsp;V</td></tr>
-        <tr><td class="mono">10</td><td>OFF</td><td>ON</td><td><code>THRESH10</code></td><td>0.45&nbsp;V (factory-set position)</td></tr>
-        <tr><td class="mono">11</td><td>OFF</td><td>OFF</td><td><code>THRESH11</code></td><td>0.62&nbsp;V</td></tr>
+        <tr><td class="mono">0</td><td class="mono">00</td><td><code>THRESH00</code></td><td>0.15&nbsp;V</td><td>Most sensitive — triggers on very high resistances.</td></tr>
+        <tr><td class="mono">1</td><td class="mono">01</td><td><code>THRESH01</code></td><td>0.54&nbsp;V</td><td>&nbsp;</td></tr>
+        <tr><td class="mono">2</td><td class="mono">10</td><td><code>THRESH10</code></td><td>0.45&nbsp;V</td><td><strong>The factory setting.</strong></td></tr>
+        <tr><td class="mono">3</td><td class="mono">11</td><td><code>THRESH11</code></td><td>0.62&nbsp;V</td><td>Least sensitive — only firmer connections read as closed.</td></tr>
       </tbody>
     </table></div>
-    <p>The switches are read <strong>live</strong> — flip them at any time and the very next
-      detection pass uses the new threshold. When connected over serial, a change is announced as
-      <code>$DIP,&lt;position&gt;,&lt;threshold&gt;</code>.</p>
+    <p>Selection takes effect on the <strong>very next detection pass</strong> — there is no reboot
+      and no <code>!SAVE</code> needed to try one out. Over serial the change is announced as
+      <code>$DIP,&lt;position&gt;,&lt;threshold&gt;</code>. Follow with <code>!SAVE</code> to make it
+      the unit's boot setting:</p>
+    <pre>!SET,THRESHSEL,0        <span class="c">// switch to the most sensitive slot</span>
+<span class="tx">$CFG,THRESHSEL,0
+$DIP,0,0.1500</span>
+!SAVE
+<span class="tx">$OK,save</span></pre>
     <div class="callout">
-      <p><strong>The switch positions are re-programmable.</strong> The four values are just EEPROM
-        entries: e.g. <code>!SET,THRESH00,0.02</code> followed by <code>!SAVE</code> permanently
-        changes what the 00 position means on that unit. This lets you ship one firmware and tune
-        each unit's sensitivity map to its application.</p>
+      <p><strong>Why the odd position names?</strong> The four slots are called
+        <span class="mono">00</span>/<span class="mono">01</span>/<span class="mono">10</span>/<span class="mono">11</span>
+        because on the revision&nbsp;2 board they were chosen with a pair of DIP switches, and the
+        names carried over into the key names, the host tooling, and the <code>$DIP</code> message.
+        On a V3 board they are simply slots 0–3.</p>
+    </div>
+    <div class="callout">
+      <p><strong>What each slot means is re-programmable.</strong> The four values are just EEPROM
+        entries: <code>!SET,THRESH00,0.02</code> followed by <code>!SAVE</code> permanently changes
+        what slot 00 means on that unit. This lets one firmware build ship with each unit's
+        sensitivity map tuned to its application.</p>
+    </div>
+  </div>
+</section>
+
+<section id="lowpower">
+  <div class="wrap">
+    <div class="eyebrow">5 &middot; Low Power</div>
+    <h2>The low-power sleep mode</h2>
+    <p>Running flat out, Blinky Hawk draws about <strong>11&nbsp;mA</strong>. Asleep it draws about
+      <strong>2&nbsp;mA</strong> — and because it can still detect while asleep, sleeping is the
+      <em>normal</em> operating state rather than a standby mode. The unit spends almost all of its
+      life there and wakes fully only when it finds something.</p>
+
+    <h3>What "asleep" actually does</h3>
+    <p>After <code>SLEEPSEC</code> seconds in which the leads have read nothing but OPEN, the
+      firmware parks every load it can switch — the LED rail, the speaker, the battery-sense divider,
+      and optionally the bridge MOSFET — and puts the RA4M1 into <strong>Software Standby</strong>:
+      CPU and peripheral clocks stopped, RAM retained. A real-time-clock interrupt wakes it every
+      <code>SLEEPTICKMS</code>. Every <code>SLEEPTICKS</code> wakes it runs one cheap probe, and goes
+      straight back to sleep unless the probe finds continuity or voltage — in which case the unit
+      returns to full-rate operation and alerts normally.</p>
+    <p>Worst-case detection latency is therefore
+      <strong><code>SLEEPTICKMS</code>&nbsp;&times;&nbsp;<code>SLEEPTICKS</code></strong>.</p>
+    <ul class="clean">
+      <li><strong>The probe is a real detection pass</strong>, using the selected
+        <code>DETMETHOD</code> and the live threshold — it is only cheaper, averaging
+        <code>SLEEPAVG</code> readings instead of <code>VOLTAVG</code> and skipping the display
+        debounce.</li>
+      <li><strong>Voltage detection is deliberately blunter while asleep.</strong> It uses only the
+        wide instant-bypass band (<code>VOLTFAST</code>&nbsp;&times;&nbsp;<code>REFBAND</code>),
+        never the tight averaged window, so lead noise cannot wake the unit on every tick.</li>
+      <li><strong>Plugging in USB wakes it</strong>, as does any serial traffic, and it never sleeps
+        while charging or in diagnostic mode. <code>SLEEPSEC,0</code> disables sleeping entirely.</li>
+      <li><strong>A 6&nbsp;ms dim-blue flash every <code>SLEEPHB</code> ticks</strong> says "asleep,
+        not dead". Set <code>SLEEPHB</code> to 0 to suppress it — each flash costs real current.</li>
+      <li><strong>It will not sleep in the first 30 seconds after power-on.</strong> That grace
+        period is a safety net: sleeping breaks the USB link, so it guarantees a window in which a
+        host can always reach a freshly-flashed unit.</li>
+    </ul>
+
+    <h3>Wake period: <code>SLEEPTICKMS</code></h3>
+    <p>The wake period is produced by the RTC's periodic interrupt, which only offers a fixed ladder
+      of rates. Whatever you set is <strong>snapped to the nearest available rung</strong> and the
+      snapped value is written back, so <code>!CFG</code> always reports the rate actually in force:</p>
+    <p><span class="pill">2000</span><span class="pill">1000</span><span class="pill">500</span><span class="pill">250</span><span class="pill">125</span><span class="pill">63</span><span class="pill">31</span><span class="pill">16</span><span class="pill">8</span><span class="pill">4</span>&nbsp;ms</p>
+    <p class="small">The rungs below 125&nbsp;ms are rounded: 63 is really 62.5&nbsp;ms (1/16&nbsp;s)
+      and 4 is really 3.90625&nbsp;ms (1/256&nbsp;s). Only the reported latency arithmetic uses the
+      rounded number; the interrupt itself runs at the exact rate.</p>
+    <div class="callout warn">
+      <p><strong>Faster is not automatically better.</strong> Sleep current is dominated by how often
+        the unit probes, not by the standby floor — halving <code>SLEEPTICKMS</code> roughly doubles
+        the average draw unless you raise <code>SLEEPTICKS</code> to keep the probe rate constant.
+        Below roughly 30&nbsp;ms the probe no longer fits inside the tick, the unit stops idling
+        between wakes, and the draw climbs back toward the 11&nbsp;mA awake figure. The bottom rungs
+        exist for measuring that knee, not for shipping.</p>
+    </div>
+    <div class="callout">
+      <p><strong>As configured for shipping:</strong> <code>SLEEPTICKMS</code>&nbsp;63 and
+        <code>SLEEPSEC</code>&nbsp;1 — the unit sleeps a second after the leads go open and checks
+        them about sixteen times a second, for roughly 2&nbsp;mA average. This is a configuration,
+        not the compile-time default listed in <a href="#config">section 7</a>; a unit reset with
+        <code>!DEFAULTS</code> comes back at 2000&nbsp;ms / 15&nbsp;s and must be re-set.</p>
+    </div>
+
+    <h3>Wake thresholds</h3>
+    <p>A probe taken out of standby measures a few percent high — the analog path has not fully
+      settled and the rails have just come back up. If a threshold tuned on the bench sits below the
+      sleeping unit's closed-lead reading, <strong>continuity will silently fail to wake the
+      unit</strong>. The <code>SLEEPTHR00…SLEEPTHR11</code> keys give each slot its own wake
+      threshold for exactly this case; <strong>0 means "use the ordinary <code>THRESH</code> value
+      for that slot"</strong>, which is the default.</p>
+
+    <h3>Commands</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>!SLEEP</code></td>
+            <td>Arm the timeout to fire as soon as sleeping is allowed, instead of waiting out
+                <code>SLEEPSEC</code>. Issue it over USB, then unplug — the unit sleeps the moment
+                it is idle and off USB. <code>!SLEEP,0</code> cancels.
+                Replies <code>$OK,sleep,armed</code>.</td></tr>
+        <tr><td><code>!SLEEPTEST</code></td>
+            <td>Run one sleeping-mode probe <em>right now</em>, awake and on USB, and report exactly
+                what it decided — state, metric, the wake threshold used, the awake threshold, resting
+                differential, return time and area. The probe normally runs unplugged and silent, so
+                this is the only way to see its numbers directly.</td></tr>
+        <tr><td><code>!SLEEPLOG</code></td>
+            <td>Dump the probe history recorded while the unit was asleep (a 64-entry ring, oldest
+                first) as <code>$SLOG</code> rows. <code>!SLEEPLOG,0</code> clears it.</td></tr>
+        <tr><td><code>!FLOOR,&lt;0–3&gt;</code></td>
+            <td>Park the board in one fixed state so a series ammeter reads a stable current:
+                1&nbsp;= parked with the bridge resting, 2&nbsp;= parked with the bridge off
+                (the delta against 1 is the bridge's own draw), 3&nbsp;= parked but idling instead of
+                in standby (the delta against 1 is what standby buys). <code>!FLOOR,0</code> exits.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout">
+      <p><strong><code>!SLEEPLOG</code> is the answer to "it won't wake off USB".</strong> The
+        sleeping probe runs with USB unplugged and so cannot print — the unit behaves differently
+        precisely when you cannot watch it. Every probe therefore records its decision to RAM.
+        Unplug, exercise the leads, plug back in, and <code>!SLEEPLOG</code> shows what it actually
+        measured. Rows are marked <span class="mono">SLEEP</span> or <span class="mono">AWAKE</span>,
+        and comparing the two is the point: the ground reference — and therefore the metric — is not
+        the same on battery as it is on the bench. <strong>Tune wake thresholds against the
+        <span class="mono">SLEEP</span> rows, not against USB readings.</strong></p>
     </div>
   </div>
 </section>
 
 <section id="serial">
   <div class="wrap">
-    <div class="eyebrow">5 &middot; Serial Interface</div>
+    <div class="eyebrow">6 &middot; Serial Interface</div>
     <h2>Talking to the unit</h2>
     <p>Connect over USB and open the port at <strong>115200 baud</strong>. Any serial terminal
       works (Arduino Serial Monitor, PuTTY, a Python script). The protocol is line-based text:</p>
@@ -368,12 +494,24 @@
       <tbody>
         <tr><td><code>!STATUS</code> or <code>!?</code></td><td>Print the <code>$STATUS</code> summary line (mode, DIP position, active threshold, detection method, live metric, charge/battery state, unsaved-changes flag, serial number&hellip;).</td></tr>
         <tr><td><code>!ALERTS[,0|1]</code></td><td>Re-enable the normal alerts while charging (<code>1</code>) or restore the charging blink (<code>0</code>). Bare = toggle. Auto-clears on unplug.</td></tr>
-        <tr><td><code>!DIAG[,0|1]</code></td><td>Enter/exit diagnostic mode (bare = toggle). See <a href="#diag">section 8</a>.</td></tr>
+        <tr><td><code>!DIAG[,0|1]</code></td><td>Enter/exit diagnostic mode (bare = toggle). See <a href="#diag">section 9</a>.</td></tr>
         <tr><td><code>!STREAM[,0|1]</code></td><td>Continuous raw ADC streaming on/off (diagnostic mode only).</td></tr>
         <tr><td><code>!RATE,&lt;ms&gt;</code></td><td>Streaming interval in milliseconds.</td></tr>
         <tr><td><code>!VMODE,&lt;0|1|2&gt;</code></td><td>Voltage detection override: 0 = auto, 1 = force "voltage present", 2 = disable voltage detection.</td></tr>
         <tr><td><code>!MOSFET,&lt;-1|0|1&gt;</code></td><td>MOSFET override: &minus;1 = automatic (normal detection), 0 = hold off, 1 = hold on. Diagnostic mode only.</td></tr>
         <tr><td><code>!CAP[,&lt;ms&gt;]</code></td><td>High-speed ADC capture across a MOSFET toggle; dumps <code>$CAPSTART</code>/<code>$CAP</code>/<code>$CAPEND</code> rows for plotting transients.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Low-power commands</h3>
+    <p>Described in full in <a href="#lowpower">section 5</a>.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>!SLEEP</code> / <code>!SLEEP,0</code></td><td>Arm / cancel "sleep as soon as allowed". Arm over USB, then unplug.</td></tr>
+        <tr><td><code>!SLEEPTEST</code></td><td>Run one sleeping-mode probe now and print what it decided (<code>$SLEEPTEST</code>).</td></tr>
+        <tr><td><code>!SLEEPLOG</code> / <code>!SLEEPLOG,0</code></td><td>Dump / clear the probe history recorded while asleep.</td></tr>
+        <tr><td><code>!FLOOR,&lt;0–3&gt;</code></td><td>Park the board in a fixed state for a series-ammeter current measurement.</td></tr>
       </tbody>
     </table></div>
 
@@ -386,7 +524,9 @@
         <tr><td><code>$CFGEND</code></td><td>End of a <code>!CFG</code> dump.</td></tr>
         <tr><td><code>$SN,&lt;value&gt;</code></td><td>The unit serial number (empty if unassigned).</td></tr>
         <tr><td><code>$OK,&lt;what&gt;</code> / <code>$ERR,&lt;what&gt;,&lt;detail&gt;</code></td><td>Command acknowledged / failed.</td></tr>
-        <tr><td><code>$DIP,&lt;pos&gt;,&lt;threshV&gt;</code></td><td>A DIP switch was flipped; new position (0–3) and active threshold.</td></tr>
+        <tr><td><code>$DIP,&lt;pos&gt;,&lt;threshV&gt;</code></td><td>The active threshold slot changed — new position (0–3) and the threshold now in force. Emitted in response to <code>!SET,THRESHSEL</code> (and, on a V2 board, when a DIP switch is flipped). The name is historical; host tooling keys on it.</td></tr>
+        <tr><td><code>$SLEEPTEST,&hellip;</code></td><td>Result of <code>!SLEEPTEST</code>: state, metric, wake threshold, awake threshold, resting differential, return time, area, method.</td></tr>
+        <tr><td><code>$SLOGSTART,&hellip;</code> / <code>$SLOG,&hellip;</code> / <code>$SLOGEND</code></td><td>Sleep-probe log dump. Each <code>$SLOG</code> row is index, <span class="mono">SLEEP</span>/<span class="mono">AWAKE</span>, state, metric, threshold, return time, resting differential.</td></tr>
         <tr><td><code>$DIAG,&lt;ms&gt;,&lt;rawPos&gt;,&lt;rawNeg&gt;,&lt;posV&gt;,&lt;negV&gt;,&lt;diffV&gt;</code></td><td>One streamed raw sample.</td></tr>
         <tr><td><code>$CAPSTART&hellip;</code> / <code>$CAP&hellip;</code> / <code>$CAPEND</code></td><td>Transient-capture dump (raw counts; header carries full-scale and Vref for conversion).</td></tr>
       </tbody>
@@ -396,11 +536,20 @@
 
 <section id="config" class="alt">
   <div class="wrap">
-    <div class="eyebrow">6 &middot; Configuration Reference</div>
+    <div class="eyebrow">7 &middot; Configuration Reference</div>
     <h2>Every configuration key</h2>
     <p>All keys are set with <code>!SET,&lt;key&gt;,&lt;value&gt;</code> and persisted with
       <code>!SAVE</code>. Boolean keys take 0 or 1. Out-of-range values are clamped to the range
       shown and the clamped value is echoed back.</p>
+
+    <h3>Board</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Key</th><th>Type</th><th>Default</th><th>Range</th><th>What it controls</th></tr></thead>
+      <tbody>
+        <tr><td><code>HWREV</code></td><td>2/3</td><td>3</td><td>2 … 3</td><td>Which PCB this module is plugged into. This is a statement of fact about the hardware, not a preference — it decides whether D8 is a buzzer leg (V3) or a DIP-switch input (V2). <strong>It survives <code>!DEFAULTS</code></strong>, exactly like the serial number, so a factory reset can never hand D8 to the buzzer on a V2 board. Change it only if a board is genuinely rebuilt. See <a href="#hwrev2">the appendix</a>.</td></tr>
+        <tr><td><code>SPKDIFF</code></td><td>bool</td><td>1</td><td>0/1</td><td>V3 only: drive the piezo differentially (anti-phase across D8/D9) for roughly +6&nbsp;dB over single-ended drive. 0 parks D8 low and drives D9 alone. Ignored on V2, whose buzzer is single-ended by construction.</td></tr>
+      </tbody>
+    </table></div>
 
     <h3>Detection</h3>
     <div class="tablewrap"><table>
@@ -408,10 +557,11 @@
       <tbody>
         <tr><td><code>REFCENTER</code></td><td>volts</td><td>&minus;0.02</td><td>&minus;1 … 1</td><td>Resting differential centre. Voltage detection measures deviation from this point.</td></tr>
         <tr><td><code>REFBAND</code></td><td>volts</td><td>0.025</td><td>0.001 … 1</td><td>Half-width of the "no voltage present" window around <code>REFCENTER</code>.</td></tr>
-        <tr><td><code>THRESH00</code></td><td>units*</td><td>0.15</td><td>0.001 … 3.3</td><td>Open/closed threshold for DIP position 00 (both switches ON).</td></tr>
-        <tr><td><code>THRESH01</code></td><td>units*</td><td>0.54</td><td>0.001 … 3.3</td><td>Threshold for DIP position 01 (D8 ON, D10 OFF).</td></tr>
-        <tr><td><code>THRESH10</code></td><td>units*</td><td>0.45</td><td>0.001 … 3.3</td><td>Threshold for DIP position 10 (D8 OFF, D10 ON — the factory-set position).</td></tr>
-        <tr><td><code>THRESH11</code></td><td>units*</td><td>0.62</td><td>0.001 … 3.3</td><td>Threshold for DIP position 11 (both switches OFF).</td></tr>
+        <tr><td><code>THRESHSEL</code></td><td>0–3</td><td>3</td><td>0 … 3</td><td>Which threshold slot is active: 0&nbsp;=&nbsp;<code>THRESH00</code>, 1&nbsp;=&nbsp;<code>THRESH01</code>, 2&nbsp;=&nbsp;<code>THRESH10</code>, 3&nbsp;=&nbsp;<code>THRESH11</code>. Takes effect on the next detection pass. Ignored on a V2 board, where the DIP switches decide.</td></tr>
+        <tr><td><code>THRESH00</code></td><td>units*</td><td>0.15</td><td>0.001 … 3.3</td><td>Open/closed threshold for slot 00 (<code>THRESHSEL</code>&nbsp;0) — the most sensitive setting.</td></tr>
+        <tr><td><code>THRESH01</code></td><td>units*</td><td>0.54</td><td>0.001 … 3.3</td><td>Threshold for slot 01 (<code>THRESHSEL</code>&nbsp;1).</td></tr>
+        <tr><td><code>THRESH10</code></td><td>units*</td><td>0.45</td><td>0.001 … 3.3</td><td>Threshold for slot 10 (<code>THRESHSEL</code>&nbsp;2) — the factory setting.</td></tr>
+        <tr><td><code>THRESH11</code></td><td>units*</td><td>0.62</td><td>0.001 … 3.3</td><td>Threshold for slot 11 (<code>THRESHSEL</code>&nbsp;3) — the least sensitive setting.</td></tr>
         <tr><td><code>DETMETHOD</code></td><td>0/1/2</td><td>0</td><td>0 … 2</td><td>Detection method: 0 = single reading (volts), 1 = time-to-return (ms), 2 = tail area (V·ms). See <a href="#detection">section 2</a>. Changing this changes the units of the <code>THRESH</code> keys.</td></tr>
         <tr><td><code>DETBAND</code></td><td>volts</td><td>0.05</td><td>0.005 … 1</td><td>Method&nbsp;1 only: the differential is "returned" once it comes back within this band of the resting centre.</td></tr>
         <tr><td><code>DETWINUS</code></td><td>µs</td><td>1500</td><td>200 … 5000</td><td>Methods&nbsp;1&nbsp;&amp;&nbsp;2: maximum recovery-sampling window. Also the timeout — if the differential never returns, the metric maxes out (reads as fully open).</td></tr>
@@ -450,12 +600,74 @@
       </tbody>
     </table></div>
 
+    <h3>Beep pulse shape</h3>
+    <p>These set the length of the individual pulses <em>within</em> a beep, as distinct from
+      <code>CONTREPMS</code>/<code>VOLTREPMS</code> (how often a beep repeats) and
+      <code>CONTPULSES</code>/<code>VOLTPULSES</code> (how many pulses each beep contains). Shorter
+      on-times make a tighter, clickier alert; longer ones make it more insistent.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Key</th><th>Type</th><th>Default</th><th>Range</th><th>What it controls</th></tr></thead>
+      <tbody>
+        <tr><td><code>CONTONMS</code></td><td>ms</td><td>20</td><td>1 … 2000</td><td>Continuity pulse on-time at <strong>first contact</strong>.</td></tr>
+        <tr><td><code>CONTHOLDMS</code></td><td>ms</td><td>50</td><td>1 … 2000</td><td>Continuity pulse on-time for the <strong>ongoing re-beep</strong> while the connection is held. Separate from <code>CONTONMS</code> so the first contact can be a short click and the reminder a longer tone (or the reverse).</td></tr>
+        <tr><td><code>CONTOFFMS</code></td><td>ms</td><td>10</td><td>1 … 2000</td><td>Gap between pulses within a multi-pulse continuity beep.</td></tr>
+        <tr><td><code>VOLTONMS</code></td><td>ms</td><td>20</td><td>1 … 2000</td><td>Voltage pulse on-time.</td></tr>
+        <tr><td><code>VOLTOFFMS</code></td><td>ms</td><td>10</td><td>1 … 2000</td><td>Gap between pulses within the voltage beep — with the default <code>VOLTPULSES</code>&nbsp;2, this is the gap that makes it read as a double-beep.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Alert LED</h3>
+    <p>Each of the three detection states has its own brightness, flash length, and rate cap. The
+      <em>hue</em> is fixed in firmware — blue, green and red <em>are</em> the meanings — but every
+      other aspect is configurable, including switching a state's indication off entirely by setting
+      its brightness to 0.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Key</th><th>Type</th><th>Default</th><th>Range</th><th>What it controls</th></tr></thead>
+      <tbody>
+        <tr><td><code>LEDFLOATBR</code></td><td>0–255</td><td>28</td><td>0 … 255</td><td>Floating (blue) brightness. Deliberately dim — it is the state the unit is in most of the time. <strong>0 = leave this state dark.</strong></td></tr>
+        <tr><td><code>LEDFLOATMS</code></td><td>ms</td><td>150</td><td>1 … 10000</td><td>Floating flash on-time.</td></tr>
+        <tr><td><code>LEDFLOATPER</code></td><td>ms</td><td>1000</td><td>1 … 60000</td><td>Floating: minimum gap between flash <em>starts</em> — i.e. a 1&nbsp;Hz rate cap.</td></tr>
+        <tr><td><code>LEDCLOSEDBR</code></td><td>0–255</td><td>200</td><td>0 … 255</td><td>Continuity (green) brightness. 0 = this state dark.</td></tr>
+        <tr><td><code>LEDCLOSEDMS</code></td><td>ms</td><td>200</td><td>1 … 10000</td><td>Continuity flash on-time.</td></tr>
+        <tr><td><code>LEDCLOSEDPER</code></td><td>ms</td><td>500</td><td>1 … 60000</td><td>Continuity rate cap (2&nbsp;Hz by default).</td></tr>
+        <tr><td><code>LEDVOLTBR</code></td><td>0–255</td><td>200</td><td>0 … 255</td><td>Voltage (red) brightness. 0 = this state dark.</td></tr>
+        <tr><td><code>LEDVOLTMS</code></td><td>ms</td><td>200</td><td>1 … 10000</td><td>Voltage flash on-time.</td></tr>
+        <tr><td><code>LEDVOLTPER</code></td><td>ms</td><td>500</td><td>1 … 60000</td><td>Voltage rate cap (2&nbsp;Hz by default).</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout warn">
+      <p><strong>Brightness and duty cycle are battery.</strong> The LED is one of the larger
+        switchable loads on the board. Raising <code>LEDFLOATBR</code> or lengthening
+        <code>LEDFLOATMS</code> costs runtime continuously, because floating is the state the unit
+        sits in almost all the time — the other two only fire when you have found something.</p>
+    </div>
+
+    <h3>Low power</h3>
+    <p>Behaviour is described in <a href="#lowpower">section 5</a>. The defaults below are the
+      compile-time values; production units are configured faster (<code>SLEEPSEC</code>&nbsp;1,
+      <code>SLEEPTICKMS</code>&nbsp;63).</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Key</th><th>Type</th><th>Default</th><th>Range</th><th>What it controls</th></tr></thead>
+      <tbody>
+        <tr><td><code>SLEEPSEC</code></td><td>seconds</td><td>15</td><td>0 … 65535</td><td>Open-lead idle time before the unit sleeps. <strong>0 disables sleeping entirely.</strong> Anything other than an open lead restarts the countdown, as does being on USB or in diagnostic mode.</td></tr>
+        <tr><td><code>SLEEPTICKMS</code></td><td>ms</td><td>2000</td><td>4 … 2000</td><td>Base wake period. Snapped to the nearest rate the RTC can produce (2000/1000/500/250/125/63/31/16/8/4) and the snapped value is written back.</td></tr>
+        <tr><td><code>SLEEPTICKS</code></td><td>count</td><td>1</td><td>1 … 255</td><td>Probe every N wake ticks. Worst-case detection latency is <code>SLEEPTICKMS</code>&nbsp;&times;&nbsp;this. Raise it alongside a faster tick to hold the probe rate — and the current — constant.</td></tr>
+        <tr><td><code>SLEEPAVG</code></td><td>count</td><td>3</td><td>1 … 50</td><td>Readings per sleeping voltage check (against <code>VOLTAVG</code> when awake). Any one reading over the instant-bypass band wakes the unit; fewer reads = cheaper and quieter.</td></tr>
+        <tr><td><code>SLEEPHB</code></td><td>ticks</td><td>30</td><td>0 … 255</td><td>Heartbeat flash every N wake ticks. <strong>Counts ticks, not seconds</strong> — speed up <code>SLEEPTICKMS</code> and the heartbeat speeds up with it, so rescale this to match. 0 = no heartbeat.</td></tr>
+        <tr><td><code>SLEEPPARK</code></td><td>bool</td><td>0</td><td>0/1</td><td>1 = park the bridge MOSFET OFF while asleep, saving its leg of the current; 0 = leave it in the resting state it uses when awake.</td></tr>
+        <tr><td><code>SLEEPTHR00</code></td><td>units*</td><td>0</td><td>0 … 3.3</td><td>Wake threshold for slot 00. <strong>0 = use <code>THRESH00</code></strong>.</td></tr>
+        <tr><td><code>SLEEPTHR01</code></td><td>units*</td><td>0</td><td>0 … 3.3</td><td>Wake threshold for slot 01. 0 = use <code>THRESH01</code>.</td></tr>
+        <tr><td><code>SLEEPTHR10</code></td><td>units*</td><td>0</td><td>0 … 3.3</td><td>Wake threshold for slot 10. 0 = use <code>THRESH10</code>.</td></tr>
+        <tr><td><code>SLEEPTHR11</code></td><td>units*</td><td>0</td><td>0 … 3.3</td><td>Wake threshold for slot 11. 0 = use <code>THRESH11</code>.</td></tr>
+      </tbody>
+    </table></div>
+
     <h3>Power &amp; battery</h3>
     <div class="tablewrap"><table>
       <thead><tr><th>Key</th><th>Type</th><th>Default</th><th>Range</th><th>What it controls</th></tr></thead>
       <tbody>
         <tr><td><code>CHGTHRESH</code></td><td>volts</td><td>2.0</td><td>0.5 … 3.3</td><td>VBUS-sense (VBUS/2) level above which the unit considers itself USB-powered / charging.</td></tr>
-        <tr><td><code>BATTEMPTY</code></td><td>volts</td><td>3.30</td><td>2.5 … 4.0</td><td>Battery voltage mapped to 0%.</td></tr>
+        <tr><td><code>BATTEMPTY</code></td><td>volts</td><td>3.70</td><td>2.5 … 4.0</td><td>Battery voltage mapped to 0%. Set above the cell's electrical floor on purpose: below roughly 3.6&nbsp;V the analog baseline drifts enough that lead movement alone can trip the voltage detector, so the gauge is calibrated to read empty while the unit is still trustworthy. Lowering this to chase runtime buys false alerts.</td></tr>
         <tr><td><code>BATTFULL</code></td><td>volts</td><td>4.20</td><td>3.0 … 4.5</td><td>Battery voltage mapped to 100%.</td></tr>
         <tr><td><code>BATTFULLPCT</code></td><td>%</td><td>90</td><td>50 … 100</td><td>Charge percentage at/above which the charging blink turns green.</td></tr>
       </tbody>
@@ -473,7 +685,7 @@
 
 <section id="eeprom">
   <div class="wrap">
-    <div class="eyebrow">7 &middot; Persistence</div>
+    <div class="eyebrow">8 &middot; Persistence</div>
     <h2>How EEPROM storage works</h2>
     <ul class="clean">
       <li><strong>Two copies exist:</strong> the <em>RAM</em> config (what the unit is using right
@@ -492,14 +704,14 @@
       <li><strong>The serial number is separate:</strong> it lives in its own EEPROM block with its
         own magic/CRC, so it is <em>not</em> affected by <code>!DEFAULTS</code>, <code>!SAVE</code>,
         or a config-layout change. It is written only by <code>!SN,&lt;value&gt;</code>. See
-        <a href="#serial">section 5</a>.</li>
+        <a href="#serial">section 6</a>.</li>
     </ul>
   </div>
 </section>
 
 <section id="diag" class="alt">
   <div class="wrap">
-    <div class="eyebrow">8 &middot; Diagnostics</div>
+    <div class="eyebrow">9 &middot; Diagnostics</div>
     <h2>Diagnostic mode</h2>
     <p><code>!DIAG,1</code> switches the unit into diagnostic mode, intended for bench work and
       for host software (e.g. the Python configuration GUI). Detection keeps running (so the LED
@@ -521,7 +733,7 @@
 
 <section id="recipes">
   <div class="wrap">
-    <div class="eyebrow">9 &middot; Recipes</div>
+    <div class="eyebrow">10 &middot; Recipes</div>
     <h2>Common configuration recipes</h2>
 
     <h3>Permanently disable the beeper</h3>
@@ -530,9 +742,12 @@
 !SAVE
 <span class="tx">$OK,save</span></pre>
 
-    <h3>Make DIP position 00 trigger on very high resistances</h3>
+    <h3>Make threshold slot 00 trigger on very high resistances</h3>
     <pre>!SET,THRESH00,0.02      <span class="c">// smaller threshold = more sensitive</span>
 <span class="tx">$CFG,THRESH00,0.0200</span>
+!SET,THRESHSEL,0        <span class="c">// and make that slot the active one</span>
+<span class="tx">$CFG,THRESHSEL,0
+$DIP,0,0.0200</span>
 !SAVE
 <span class="tx">$OK,save</span></pre>
 
@@ -563,10 +778,37 @@ $CFGEND</span></pre>
     <h3>Switch to the time-to-return detection method</h3>
     <pre>!SET,DETMETHOD,1        <span class="c">// metric is now recovery time in ms</span>
 <span class="tx">$CFG,DETMETHOD,1</span>
-!SET,THRESH11,0.9       <span class="c">// re-tune the active DIP position in the NEW units (ms)</span>
+!SET,THRESH11,0.9       <span class="c">// re-tune the active slot in the NEW units (ms)</span>
 <span class="tx">$CFG,THRESH11,0.9000</span>
 !SAVE
 <span class="tx">$OK,save</span></pre>
+
+    <h3>Set up the shipping low-power configuration</h3>
+    <pre>!SET,SLEEPSEC,1         <span class="c">// sleep a second after the leads go open</span>
+<span class="tx">$CFG,SLEEPSEC,1</span>
+!SET,SLEEPTICKMS,63     <span class="c">// wake ~16x/sec (snaps to the 1/16 s RTC rung)</span>
+<span class="tx">$CFG,SLEEPTICKMS,63</span>
+!SET,SLEEPTICKS,1       <span class="c">// probe on every wake</span>
+!SET,SLEEPHB,0          <span class="c">// no heartbeat flash (it counts TICKS, not seconds)</span>
+!SAVE
+<span class="tx">$OK,save</span></pre>
+
+    <h3>Find out why a sleeping unit won't wake on continuity</h3>
+    <pre>!SLEEPTEST              <span class="c">// leads shorted: what does the sleeping probe see?</span>
+<span class="tx">$SLEEPTEST,CLOSED,metric=0.3820,thr=0.4500,awakethr=0.4500,&hellip;</span>
+<span class="c">// If that says CLOSED but a real sleeping unit stays asleep, the
+// difference is the battery ground reference, not the probe logic.
+// Unplug, exercise the leads, plug back in, and look at the real thing:</span>
+!SLEEPLOG
+<span class="tx">$SLOGSTART,64,412,method=0
+$SLOG,0,SLEEP,FLOAT,0.5100,0.4500,&hellip;
+$SLOG,1,AWAKE,CLOSED,0.3800,0.4500,&hellip;
+&hellip;
+$SLOGEND</span>
+<span class="c">// SLEEP rows reading high against thr = raise the wake threshold for
+// that slot, leaving the awake threshold alone:</span>
+!SET,SLEEPTHR10,0.55
+!SAVE</pre>
 
     <h3>Assign a serial number to a new unit</h3>
     <pre>!SN                     <span class="c">// check first — is one already set?</span>
@@ -579,7 +821,7 @@ $OK,sn</span>                 <span class="c">// written to EEPROM immediately; 
 
 <section id="fixed" class="alt">
   <div class="wrap">
-    <div class="eyebrow">10 &middot; Hardware Map</div>
+    <div class="eyebrow">11 &middot; Hardware Map</div>
     <h2>Fixed (compile-time) hardware map</h2>
     <p>These are properties of the Blinky Hawk PCB and are <em>not</em> runtime-configurable —
       changing them requires editing and re-flashing the firmware
@@ -589,26 +831,92 @@ $OK,sn</span>                 <span class="c">// written to EEPROM immediately; 
       <tbody>
         <tr><td>MCU</td><td>Seeed XIAO RA4M1</td><td>Renesas RA4M1, 14-bit ADC, 3.3&nbsp;V reference.</td></tr>
         <tr><td>Sense positive</td><td>A2</td><td>Pseudo-differential positive input.</td></tr>
-        <tr><td>Sense negative</td><td>A1</td><td>Only read live when <code>NEGFIX</code>=0.</td></tr>
+        <tr><td>Sense negative</td><td>A1</td><td><strong>Not connected on V3</strong> — leave <code>NEGFIX</code>=1. Setting <code>NEGFIX</code>=0 on a V3 board reads a floating pin; the firmware allows it for bench work but warns. On V2 it is a real input.</td></tr>
         <tr><td>Bridge MOSFET gate</td><td>D7</td><td>HIGH = resting/bridge on.</td></tr>
-        <tr><td>Speaker</td><td>D9</td><td>Passive or active buzzer (<code>PASSIVE</code> key).</td></tr>
-        <tr><td>DIP switch "first digit"</td><td>D8</td><td>Pull-up; ON = pin grounded.</td></tr>
-        <tr><td>DIP switch "second digit"</td><td>D10</td><td>Pull-up; ON = pin grounded.</td></tr>
-        <tr><td>Status LED</td><td>Onboard RGB (data pin 6, power enable)</td><td>Colours and flash cadences are compile-time constants.</td></tr>
+        <tr><td>Speaker, "hot" leg</td><td>D9</td><td>Passive or active buzzer (<code>PASSIVE</code> key).</td></tr>
+        <tr><td>Speaker, anti-phase leg</td><td>D8</td><td>V3: the piezo sits across D8/D9 and is driven differentially (<code>SPKDIFF</code>). V2: this pin is a DIP-switch input instead — see <a href="#hwrev2">the appendix</a>.</td></tr>
+        <tr><td>D10</td><td>—</td><td>V3: no connection, parked as an output low. V2: DIP-switch second digit.</td></tr>
+        <tr><td>Status LED</td><td>LED1 on the PCB (SK6812, data pin&nbsp;6)</td><td>Colours are compile-time; brightness, flash length and rate caps are configurable per state. On V3, LED1 is wired straight to the battery rail and cannot be power-gated, so its quiescent draw is a hardware floor rather than something the firmware can park.</td></tr>
         <tr><td>USB / charge sense</td><td>A3</td><td>Reads VBUS/2 through a divider.</td></tr>
         <tr><td>Battery sense</td><td>BAT_DET / BAT_READ_EN</td><td>Onboard Vbatt/2 divider, gated by the enable pin.</td></tr>
-        <tr><td>Serial</td><td>USB-CDC, 115200 baud</td><td>Line-based text protocol (<a href="#serial">section 5</a>).</td></tr>
+        <tr><td>Serial</td><td>USB-CDC, 115200 baud</td><td>Line-based text protocol (<a href="#serial">section 6</a>).</td></tr>
       </tbody>
     </table></div>
-    <p class="small">Also compile-time: LED colours and flash on-times/rate caps, beep pulse
-      micro-timing (pulse on/off durations), the charging-blink cadence, and the transient-capture
-      buffer size.</p>
+    <p class="small">Also compile-time: the LED hues, the charging-blink cadence, the sleep
+      heartbeat's flash length and brightness, the 30-second post-boot grace period before the unit
+      may sleep, and the transient-capture buffer size. (LED brightness/timing and beep pulse
+      shaping <em>are</em> configurable — see <a href="#config">section 7</a>.)</p>
+  </div>
+</section>
+
+<section id="hwrev2">
+  <div class="wrap">
+    <div class="eyebrow">12 &middot; Appendix</div>
+    <h2>Hardware revision 2</h2>
+    <p><strong>One revision&nbsp;2 unit exists.</strong> If you are not holding it, skip this
+      appendix — everything else in this manual describes the V3 board that all current units use.
+      The firmware supports both from a single build, switched by the <code>HWREV</code>
+      configuration key.</p>
+
+    <h3>What is different</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>&nbsp;</th><th>Revision 2</th><th>Revision 3 (current)</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Threshold selection</strong></td>
+            <td>A 4-way DIP switch on the board, read live — flip it and the next detection pass
+                uses the new threshold. No USB needed.</td>
+            <td>The <code>THRESHSEL</code> configuration key. No switch on the board.</td></tr>
+        <tr><td><strong>Buzzer</strong></td>
+            <td>Single-ended, driven from D9 alone. <code>SPKDIFF</code> does nothing.</td>
+            <td>Piezo across D8/D9, driven anti-phase for roughly +6&nbsp;dB (<code>SPKDIFF</code>).</td></tr>
+        <tr><td><strong>D8 / D10</strong></td>
+            <td>DIP-switch inputs, with pull-ups.</td>
+            <td>D8 is the buzzer's second leg; D10 is unused.</td></tr>
+        <tr><td><strong>A1 (sense negative)</strong></td>
+            <td>A real input — <code>NEGFIX</code>=0 works.</td>
+            <td>No connection. Leave <code>NEGFIX</code>=1.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Reading the DIP switches</h3>
+    <p>Two of the four switch positions (on pins D8 and D10) select which stored threshold is
+      active. Each pin has a pull-up and the switch shorts it to ground, so a switch that is
+      <strong>ON reads 0</strong> and one that is <strong>OFF reads 1</strong>. The position code is
+      the two pin readings, <em>first digit&nbsp;=&nbsp;D8, second digit&nbsp;=&nbsp;D10</em> — which
+      is where the <code>THRESH00…THRESH11</code> key names come from:</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Position</th><th>D8 switch</th><th>D10 switch</th><th>Config key</th><th>Factory default</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">00</td><td>ON</td><td>ON</td><td><code>THRESH00</code></td><td>0.15&nbsp;V</td></tr>
+        <tr><td class="mono">01</td><td>ON</td><td>OFF</td><td><code>THRESH01</code></td><td>0.54&nbsp;V</td></tr>
+        <tr><td class="mono">10</td><td>OFF</td><td>ON</td><td><code>THRESH10</code></td><td>0.45&nbsp;V (factory-set position)</td></tr>
+        <tr><td class="mono">11</td><td>OFF</td><td>OFF</td><td><code>THRESH11</code></td><td>0.62&nbsp;V</td></tr>
+      </tbody>
+    </table></div>
+    <p>The remaining two switch positions are wired into the analog bridge rather than to the
+      microcontroller: they bypass resistors to set the permanent series resistance. The pairs are
+      silkscreened on the PCB and are <strong>moved together</strong> — the switches the firmware
+      reads tell it which resistance the other pair just selected.</p>
+
+    <div class="callout warn">
+      <p><strong><code>HWREV</code> must stay at 2 on this board, and it does so on its own.</strong>
+        It survives <code>!DEFAULTS</code>, and any unit whose stored configuration predates the V3
+        firmware is pinned to <code>HWREV</code>&nbsp;2 automatically when that configuration is
+        migrated forward. You should never need to set it. If it were set to 3 on a V2 board, the
+        firmware would drive D8 as a push-pull buzzer output into whatever the DIP switch has it
+        connected to, and threshold selection would stop responding to the switches.</p>
+    </div>
+    <div class="callout">
+      <p><strong>Everything else in this manual applies unchanged</strong> — detection methods, the
+        low-power sleep mode, alerts, the serial protocol, and every configuration key not listed
+        above. <code>THRESHSEL</code> and <code>SPKDIFF</code> are simply ignored.</p>
+    </div>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    <p><strong>OIH Designs</strong> — Blinky Hawk firmware manual (BlinkyHawk_RA4M1, config v2).</p>
+    <p><strong>OIH Designs</strong> — Blinky Hawk firmware manual (BlinkyHawk_RA4M1, config v7).</p>
     <p class="small"><a href="user-guide.html">User guide</a> &middot;
       <a href="index.html">&larr; Back to the main project page</a></p>
   </div>
