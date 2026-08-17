@@ -413,7 +413,7 @@ $DIP,0,0.1500</span>
         <tr><td><code>!SLEEPTEST</code></td>
             <td>Run one sleeping-mode probe <em>right now</em>, awake and on USB, and report exactly
                 what it decided — state, metric, the wake threshold used, the awake threshold, resting
-                differential, return time and area. The probe normally runs unplugged and silent, so
+                differential, return time, and area. The probe normally runs unplugged and silent, so
                 this is the only way to see its numbers directly.</td></tr>
         <tr><td><code>!SLEEPLOG</code></td>
             <td>Dump the probe history recorded while the unit was asleep (a 64-entry ring, oldest
@@ -844,7 +844,7 @@ $OK,sn</span>                 <span class="c">// written to EEPROM immediately; 
         <tr><td>Speaker, "hot" leg</td><td>D9</td><td>Passive or active buzzer (<code>PASSIVE</code> key).</td></tr>
         <tr><td>Speaker, anti-phase leg</td><td>D8</td><td>V3: the piezo sits across D8/D9 and is driven differentially (<code>SPKDIFF</code>). V2: this pin is a DIP-switch input instead — see <a href="#hwrev2">the appendix</a>.</td></tr>
         <tr><td>D10</td><td>—</td><td>V3: no connection, parked as an output low. V2: DIP-switch second digit.</td></tr>
-        <tr><td>Status LED</td><td>LED1 on the PCB (SK6812, data pin&nbsp;6)</td><td>Colors are compile-time; brightness, flash length and rate caps are configurable per state. On V3, LED1 is wired straight to the battery rail and cannot be power-gated, so its quiescent draw is a hardware floor rather than something the firmware can park.</td></tr>
+        <tr><td>Status LED</td><td>LED1 on the PCB (SK6812, data pin&nbsp;6)</td><td>Colors are compile-time; brightness, flash length, and rate caps are configurable per state. On V3, LED1 is wired straight to the battery rail and cannot be power-gated, so its quiescent draw is a hardware floor rather than something the firmware can park.</td></tr>
         <tr><td>USB / charge sense</td><td>A3</td><td>Reads VBUS/2 through a divider.</td></tr>
         <tr><td>Battery sense</td><td>BAT_DET / BAT_READ_EN</td><td>Onboard Vbatt/2 divider, gated by the enable pin.</td></tr>
         <tr><td>Serial</td><td>USB-CDC, 115200 baud</td><td>Line-based text protocol (<a href="#serial">section 6</a>).</td></tr>
