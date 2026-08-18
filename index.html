@@ -37,7 +37,8 @@
   nav{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.92);
     backdrop-filter:saturate(150%) blur(8px); border-bottom:1px solid var(--grid);}
   nav .wrap{display:flex; align-items:center; justify-content:space-between; height:60px;}
-  nav .brand{font-weight:700; color:var(--ink); font-size:1.05rem;}
+  nav .brand{font-weight:700; color:var(--ink); font-size:1.05rem; text-decoration:none;}
+  nav .brand:hover{color:var(--accent); text-decoration:none;}
   nav .brand span{color:var(--accent);}
   nav .links a{color:var(--ink); font-size:.95rem; margin-left:22px; font-weight:500;}
   nav .links a:hover{color:var(--accent); text-decoration:none;}
@@ -50,6 +51,11 @@
   .btn:hover{background:var(--accent-dark); text-decoration:none;}
   .btn.ghost{background:transparent; color:var(--accent); border:1.5px solid var(--accent);}
   .btn.ghost:hover{background:var(--accent); color:#fff;}
+
+  /* Splash -- full-bleed opening image */
+  .splash{width:100%; overflow:hidden; background:var(--bg-ink); line-height:0;}
+  .splash img{display:block; width:100%;
+    height:clamp(240px, 42vw, 520px); object-fit:cover; object-position:center 48%;}
 
   /* Hero */
   .hero{background:linear-gradient(180deg,#fff 0%, var(--bg-alt) 100%); border-top:none;
@@ -94,6 +100,8 @@
   .card .lbl{font-size:.85rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;}
 
   figure.halfwide{max-width:430px; margin-left:auto; margin-right:auto;}
+  /* Two photos of unequal aspect shown as a matched pair */
+  .photo-pair img{height:clamp(300px,40vw,520px); object-fit:cover; object-position:center 42%;}
   .quote{font-size:1.4rem; line-height:1.5; font-weight:600; border-left:5px solid var(--accent);
     background:#fff; padding:18px 26px; border-radius:0 10px 10px 0; margin:10px 0 22px;
     box-shadow:0 4px 18px rgba(20,34,49,.06);}
@@ -144,7 +152,7 @@
 
 <nav>
   <div class="wrap">
-    <div class="brand">OIH&nbsp;<span>Designs</span></div>
+    <a class="brand" href="index.html">Blinky&nbsp;<span>Hawk</span></a>
     <div class="links">
       <a href="#product">The product</a>
       <a href="#payoff">What it tells you</a>
@@ -155,6 +163,12 @@
     </div>
   </div>
 </nav>
+
+<!-- SPLASH -->
+<div class="splash">
+  <img src="img/splash-blinkyhawk.jpg" fetchpriority="high"
+       alt="Close view of a green Blinky Hawk clipped to the side of an orange Keysight multimeter, the BLINKY HAWK name moulded into its housing. A second meter sits blurred behind it with its own detector glowing orange.">
+</div>
 
 <!-- HERO -->
 <header class="hero">
@@ -172,7 +186,7 @@
       <a href="https://www.youtube.com/watch?v=wVhMOBtXWjg" class="btn ghost" target="_blank" rel="noopener">▶ Watch the demo</a>
     </div>
     <div class="hero-img">
-      <img src="img/hero-v3.jpg" alt="Two multimeters side by side on a countertop, each with a green Blinky Hawk attached. The left reads 0.0000 V with its detector lit green because its probes are touching; the right reads 119.8 V AC at a wall outlet with its detector lit orange.">
+      <img src="img/hero-v3.jpg" alt="Two multimeters side by side on a countertop, each with a green Blinky Hawk attached. The left reads 0.0000 V with its detector lit green because its probes are touching; the right reads 118.5 V AC at a wall outlet with its detector lit orange.">
     </div>
   </div>
 </header>
@@ -232,9 +246,9 @@
 
     <div class="grid2 top">
       <figure class="halfwide">
-        <img src="img/product-alt-2.jpg" loading="lazy" alt="A Blinky Hawk unit lying on a countertop showing its green housing with the BLINKY HAWK name moulded into the side, its stacking banana plugs, the toggle switch and the USB-C charging port. Behind it a Fluke 87V reads 120.2 V AC with a second unit attached, lit orange.">
-        <figcaption>The unit itself &mdash; stacking banana plugs, the three-position toggle, and
-          USB-C for charging. Behind it, a second one calling out 120&nbsp;V.</figcaption>
+        <img src="img/product-alt-2.jpg" loading="lazy" alt="A Blinky Hawk unit lying on a countertop, the BLINKY HAWK name moulded into its green housing, with its stacking banana pins at one end, the buzzer port, the USB-C charging slot, a short red lead and a loose orange stacking banana plug beside it. Behind it a Fluke 87V reads 118.5 V AC at a wall outlet with a second unit attached, lit orange.">
+        <figcaption>The unit itself &mdash; stacking banana plugs, the buzzer port, and USB-C for
+          charging. Behind it, a second one calling out the 118&nbsp;V at the outlet.</figcaption>
       </figure>
       <div>
         <ul class="clean">
@@ -254,10 +268,25 @@
 
     <h3>A closer look</h3>
     <figure>
-      <img src="img/product-alt-1.jpg" loading="lazy" alt="Close view of a Blinky Hawk mounted on the side of a Keysight multimeter, the BLINKY HAWK name moulded into its green housing, with a second unit on a Fluke meter behind.">
+      <img src="img/product-closeup.jpg" loading="lazy" alt="Close view of a Blinky Hawk riding on the upper edge of a yellow Fluke 87V. The meter reads 119.4 V AC and the small round indicator on the detector is lit orange.">
       <figcaption>It rides on the side of the meter, out of the way of the display and the
         dial &mdash; and the same unit moves to whichever meter you are using.</figcaption>
     </figure>
+
+    <div class="grid3">
+      <figure>
+        <img src="img/detail-front.jpg" loading="lazy" alt="A Blinky Hawk standing on end on a countertop, the BLINKY HAWK name moulded into its green housing, with the metal toggle switch on top and an orange stacking banana plug and red lead at its base.">
+        <figcaption>Toggle on top, plugs on the bottom.</figcaption>
+      </figure>
+      <figure>
+        <img src="img/detail-back.jpg" loading="lazy" alt="The back of a Blinky Hawk, showing the black hook-and-loop pad that sticks it to a meter, and the stacking banana pins with an orange stacking plug pushed onto them.">
+        <figcaption>Hook-and-loop on the back; the plugs stack, so your probes still go in.</figcaption>
+      </figure>
+      <figure>
+        <img src="img/detail-on-meter.jpg" loading="lazy" alt="A Blinky Hawk attached to an orange Keysight U1272A that reads 0.0004 V, with a second unit on a meter blurred behind it glowing orange.">
+        <figcaption>Two meters, two answers &mdash; a real zero in front, live behind.</figcaption>
+      </figure>
+    </div>
 
     <h3>Open by design</h3>
     <p>This is the whole circuit &mdash; not a redacted block diagram. The schematic and the
@@ -344,10 +373,16 @@
       <strong>&gt;4 GΩ on a megohmmeter</strong> (galvanically wide open) yet still presented a low-impedance path and
       read “Closed.” So near reactive parts, treat a “Closed” as <em>“low-impedance path,”</em> not
       <em>“guaranteed DC connection.”</em></p>
-    <figure class="halfwide">
-      <img src="img/kid-using-blinkyhawk.jpg" loading="lazy" alt="A small child kneeling on a rug, holding both multimeter probes onto a battery holder. The attached Blinky Hawk is lit orange to show voltage is present.">
-      <figcaption>Simple enough for even little kids.</figcaption>
-    </figure>
+    <div class="grid2 photo-pair">
+      <figure>
+        <img src="img/live-outlet.jpg" loading="lazy" alt="A Fluke 87V propped on a countertop with its probes in a wall outlet, reading 119.4 V AC. The Blinky Hawk clipped to its side is lit orange.">
+        <figcaption>Live is never ambiguous &mdash; the detector calls it before you read the display.</figcaption>
+      </figure>
+      <figure>
+        <img src="img/kid-using-blinkyhawk.jpg" loading="lazy" alt="A small child kneeling on a rug, holding both multimeter probes onto a battery holder. The attached Blinky Hawk is lit orange to show voltage is present.">
+        <figcaption>Simple enough for even little kids.</figcaption>
+      </figure>
+    </div>
   </div>
 </section>
 <!-- TECHNICAL POINTER -->
@@ -532,6 +567,7 @@
     </div>
     <div>
       <h3>OIH Designs</h3>
+      <p class="small"><a href="https://oihdesigns.com" target="_blank" rel="noopener">Other Work</a></p>
       <p class="small muted">Nicholas Mann<br>© 2026 OIH Designs. All rights reserved.</p>
     </div>
   </div>

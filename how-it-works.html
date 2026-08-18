@@ -37,7 +37,8 @@
   nav{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.92);
     backdrop-filter:saturate(150%) blur(8px); border-bottom:1px solid var(--grid);}
   nav .wrap{display:flex; align-items:center; justify-content:space-between; height:60px;}
-  nav .brand{font-weight:700; color:var(--ink); font-size:1.05rem;}
+  nav .brand{font-weight:700; color:var(--ink); font-size:1.05rem; text-decoration:none;}
+  nav .brand:hover{color:var(--accent); text-decoration:none;}
   nav .brand span{color:var(--accent);}
   nav .links a{color:var(--ink); font-size:.95rem; margin-left:22px; font-weight:500;}
   nav .links a:hover{color:var(--accent); text-decoration:none;}
@@ -146,7 +147,7 @@
 
 <nav>
   <div class="wrap">
-    <div class="brand">OIH&nbsp;<span>Designs</span></div>
+    <a class="brand" href="index.html">Blinky&nbsp;<span>Hawk</span></a>
     <div class="links">
       <a href="index.html">&larr; Product</a>
       <a href="#versions">Two versions</a>
@@ -430,6 +431,7 @@
     </div>
     <div>
       <h3>OIH Designs</h3>
+      <p class="small"><a href="https://oihdesigns.com" target="_blank" rel="noopener">Other Work</a></p>
       <p class="small muted">Nicholas Mann<br>© 2026 OIH Designs. All rights reserved.</p>
     </div>
   </div>
