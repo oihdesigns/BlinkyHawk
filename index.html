@@ -93,6 +93,7 @@
   .card .big{font-size:1.9rem; font-weight:800; color:var(--accent); line-height:1.1;}
   .card .lbl{font-size:.85rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;}
 
+  figure.halfwide{max-width:430px; margin-left:auto; margin-right:auto;}
   .quote{font-size:1.4rem; line-height:1.5; font-weight:600; border-left:5px solid var(--accent);
     background:#fff; padding:18px 26px; border-radius:0 10px 10px 0; margin:10px 0 22px;
     box-shadow:0 4px 18px rgba(20,34,49,.06);}
@@ -171,7 +172,7 @@
       <a href="https://www.youtube.com/watch?v=wVhMOBtXWjg" class="btn ghost" target="_blank" rel="noopener">▶ Watch the demo</a>
     </div>
     <div class="hero-img">
-      <img src="img/hero.jpg" alt="Two multimeters on a workbench: the left reads ~0 V with a green 'connected' detector lit; the right probes a live 120 VAC outlet with a red detector.">
+      <img src="img/hero-v3.jpg" alt="Two multimeters side by side on a countertop, each with a green Blinky Hawk attached. The left reads 0.0000 V with its detector lit green because its probes are touching; the right reads 119.8 V AC at a wall outlet with its detector lit orange.">
     </div>
   </div>
 </header>
@@ -230,10 +231,10 @@
       you work changes.</p>
 
     <div class="grid2 top">
-      <figure>
-        <img src="img/green-closed.jpg" loading="lazy" alt="A Keysight U1272A multimeter reading 0.0051 V with Blinky Hawk clipped onto its input jacks, its LED lit green because the probe tips are touching.">
-        <figcaption>0.0051&nbsp;V on the meter &mdash; and a green light confirming the probes
-          really are connected.</figcaption>
+      <figure class="halfwide">
+        <img src="img/product-alt-2.jpg" loading="lazy" alt="A Blinky Hawk unit lying on a countertop showing its green housing with the BLINKY HAWK name moulded into the side, its stacking banana plugs, the toggle switch and the USB-C charging port. Behind it a Fluke 87V reads 120.2 V AC with a second unit attached, lit orange.">
+        <figcaption>The unit itself &mdash; stacking banana plugs, the three-position toggle, and
+          USB-C for charging. Behind it, a second one calling out 120&nbsp;V.</figcaption>
       </figure>
       <div>
         <ul class="clean">
@@ -250,6 +251,24 @@
         </ul>
       </div>
     </div>
+
+    <h3>A closer look</h3>
+    <figure>
+      <img src="img/product-alt-1.jpg" loading="lazy" alt="Close view of a Blinky Hawk mounted on the side of a Keysight multimeter, the BLINKY HAWK name moulded into its green housing, with a second unit on a Fluke meter behind.">
+      <figcaption>It rides on the side of the meter, out of the way of the display and the
+        dial &mdash; and the same unit moves to whichever meter you are using.</figcaption>
+    </figure>
+
+    <h3>Open by design</h3>
+    <p>This is the whole circuit &mdash; not a redacted block diagram. The schematic and the
+      firmware source are published, so you can see exactly what is across your probes, and change
+      it if you want to.</p>
+    <figure class="bordered">
+      <img src="img/BlinkyHawk_PCBv3_Schematic.png" loading="lazy" alt="Blinky Hawk V3 schematic: two 500 kilohm resistor ladders from the probe inputs meeting at a 100 kilohm sense resistor and an AO3400A bridge MOSFET, a TL431 reference, Schottky clamp diodes, an SK6812 LED, a buzzer across D8 and D9, and a pin-function table.">
+      <figcaption>The V3 board in full. The two 500&nbsp;kΩ ladders and the 100&nbsp;kΩ sense
+        resistor are the 1.1&nbsp;MΩ your probes see; Q1 is the bridge MOSFET the detection
+        depends on.</figcaption>
+    </figure>
 
     <h3>At a glance</h3>
     <div class="tablewrap">
@@ -325,6 +344,10 @@
       <strong>&gt;4 GΩ on a megohmmeter</strong> (galvanically wide open) yet still presented a low-impedance path and
       read “Closed.” So near reactive parts, treat a “Closed” as <em>“low-impedance path,”</em> not
       <em>“guaranteed DC connection.”</em></p>
+    <figure class="halfwide">
+      <img src="img/kid-using-blinkyhawk.jpg" loading="lazy" alt="A small child kneeling on a rug, holding both multimeter probes onto a battery holder. The attached Blinky Hawk is lit orange to show voltage is present.">
+      <figcaption>Simple enough for even little kids.</figcaption>
+    </figure>
   </div>
 </section>
 <!-- TECHNICAL POINTER -->
