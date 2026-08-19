@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Blinky Hawk — The Detector That Tells You What 0 V Means | OIH Designs</title>
+<title>Blinky Hawk — Your DMM's BFF | OIH Designs</title>
 <meta name="description" content="Blinky Hawk clips onto the multimeter you already own and tells you whether a 0 V reading means connected, open lead, or live — without ever switching out of voltmeter mode. Rechargeable, pocket-sized, patent pending.">
 <style>
   :root{
@@ -55,7 +55,7 @@
   /* Splash -- full-bleed opening image */
   .splash{width:100%; overflow:hidden; background:var(--bg-ink); line-height:0;}
   .splash img{display:block; width:100%;
-    height:clamp(240px, 42vw, 520px); object-fit:cover; object-position:center 48%;}
+    height:clamp(240px, 50vw, 800px); object-fit:cover; object-position:center 48%;}
 
   /* Hero */
   .hero{background:linear-gradient(180deg,#fff 0%, var(--bg-alt) 100%); border-top:none;
@@ -66,8 +66,7 @@
   .badge{display:inline-block; background:#fff; border:1px solid var(--grid);
     color:var(--muted); font-size:.8rem; font-weight:600; padding:4px 12px;
     border-radius:999px; margin-bottom:14px;}
-  .hero-img{margin-top:34px; border-radius:14px; overflow:hidden;
-    box-shadow:0 18px 50px rgba(20,34,49,.18);}
+  .hero-img{margin-top:40px; width:100%; overflow:hidden; line-height:0;}
   .hero-img img{display:block; width:100%;}
 
   /* Figures & layout */
@@ -174,9 +173,8 @@
 <header class="hero">
   <div class="wrap">
     <span class="badge">Patent pending &middot; OIH Designs</span>
-    <h1>Blinky&nbsp;Hawk</h1>
-    <p class="sub">Clip it onto the multimeter you already own. From then on, a
-      <strong>0&nbsp;V</strong> reading always comes with an answer:
+    <h1>Blinky&nbsp;Hawk - Your DMM's BFF</h1>
+    <p class="sub">Your DMM has a blind spot. It can't tell you when "0V" means "Open" and when it means "Closed." <br>Blinky Hawk watches that blind spot and tells you instantly:
       <em>connected, open lead, or live.</em></p>
     <p class="lede">A pocket-sized detector that piggybacks on your meter's voltage inputs. Same
       probes, same workflow, no mode switching — it watches continuously and tells you with a flash
@@ -185,58 +183,42 @@
       <a href="#notify" class="btn">Get notified when it ships</a>
       <a href="https://www.youtube.com/watch?v=wVhMOBtXWjg" class="btn ghost" target="_blank" rel="noopener">▶ Watch the demo</a>
     </div>
-    <div class="hero-img">
-      <img src="img/hero-v3.jpg" alt="Two multimeters side by side on a countertop, each with a green Blinky Hawk attached. The left reads 0.0000 V with its detector lit green because its probes are touching; the right reads 118.5 V AC at a wall outlet with its detector lit orange.">
-    </div>
+  </div>
+  <div class="hero-img">
+    <img src="img/hero-v3.jpg" alt="Two multimeters side by side on a countertop, each with a green Blinky Hawk attached. The left reads 0.0000 V with its detector lit green because its probes are touching; the right reads 118.5 V AC at a wall outlet with its detector lit orange.">
   </div>
 </header>
-<!-- PROBLEM -->
-<section id="problem" class="alt">
+<!-- SALES PITCH -->
+<section id="pitch" class="alt">
   <div class="wrap">
-    <span class="eyebrow">The problem</span>
-    <h2>What does “0&nbsp;V” actually mean?</h2>
-    <p>You set your meter to <strong>DC Volts</strong>, probe two points, and it settles to
-      <strong>0.0000&nbsp;V</strong>. Is that <em>true zero</em> — or are you simply not connected: a
-      floating probe, a clip that fell off, or a measurement across an isolation barrier?</p>
-    <div class="tablewrap">
-      <table>
-        <thead><tr><th>What's really happening</th><th>A normal meter says</th></tr></thead>
-        <tbody>
-          <tr><td>Probes on the same net (truly connected)</td><td>0 V</td></tr>
-          <tr><td>Probe floating / not contacting anything</td><td>0 V</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <span class="eyebrow">The sales pitch</span>
+    <h2>What problem does Blinky&nbsp;Hawk solve?</h2>
+
+    <p class="lede"><strong>The problem:</strong> digital multimeters have a fundamental limitation.
+      You set your meter to a voltage mode, probe two points, and read ~0&nbsp;V. Is that
+      <em>true zero</em> &mdash; or are you simply not connected: a floating probe, a clip that fell
+      off, or a measurement across an isolation barrier?</p>
+
+    <div class="quote">Blinky&nbsp;Hawk tells you what
+      <span style="color:var(--accent)">&ldquo;0&nbsp;V&rdquo;</span> means, letting you work
+      safer, faster.</div>
+
+    <h3>Probe two points. Listen.</h3>
     <div class="cards">
-      <div class="card"><div class="lbl">At best</div>
-        <p style="margin:.4em 0 0">Wasted troubleshooting time chasing a “dead” circuit that was never really probed.</p></div>
-      <div class="card"><div class="lbl" style="color:var(--red)">At worst</div>
-        <p style="margin:.4em 0 0">You trust a “0 V” that is really a <strong>floating probe</strong> — and reach into
-        a circuit that is actually <strong style="color:var(--red)">live</strong>.</p></div>
-      <div class="card"><div class="lbl">Today's fix</div>
-        <p style="margin:.4em 0 0">The ohms-mode dance: power down → switch to Ω → read → switch back → power up.
-        Slow, repetitive, and easy to leave in the wrong mode.</p></div>
+      <div class="card"><div class="lbl" style="color:var(--green)">Single beep</div>
+        <p style="margin:.4em 0 0"><strong>No voltage.</strong> You didn't even have to lift your
+          eyes.</p></div>
+      <div class="card"><div class="lbl" style="color:var(--amber)">Double beep</div>
+        <p style="margin:.4em 0 0"><strong>You have voltage</strong> (above ABS&nbsp;~0.6&nbsp;V).
+          You also didn't even have to lift your eyes.</p></div>
+      <div class="card"><div class="lbl" style="color:var(--red)">No beep</div>
+        <p style="margin:.4em 0 0"><strong>Caution.</strong> Maybe you didn't make contact? If you
+          were expecting voltage or continuity, you may have just found your problem.</p></div>
     </div>
-  </div>
-</section><!-- SOLUTION -->
-<section id="solution">
-  <div class="wrap">
-    <span class="eyebrow">The solution, in one sentence</span>
-    <div class="quote">A voltmeter that <span style="color:var(--accent)">continuously and automatically</span>
-      runs a continuity check between the probes whenever voltage is below a threshold (&lt;&nbsp;1&nbsp;V) —
-      and alerts you the instant it sees a low-impedance path between the probes.</div>
-    <p>No mode switch. No exposed ohmmeter. No guessing what “0&nbsp;V” means. It has to clear a short list of
-      hard requirements:</p>
-    <p>
-      <span class="pill">Survives ±1 kV</span>
-      <span class="pill">Doesn't disturb the reading</span>
-      <span class="pill">No perceptible delay</span>
-      <span class="pill">Compact &amp; low power</span>
-    </p>
   </div>
 </section>
 <!-- THE PRODUCT -->
-<section id="product" class="alt">
+<section id="product">
   <div class="wrap">
     <span class="eyebrow">The product</span>
     <h2>What you actually get</h2>
@@ -273,18 +255,14 @@
         dial &mdash; and the same unit moves to whichever meter you are using.</figcaption>
     </figure>
 
-    <div class="grid3">
+    <div class="grid2">
       <figure>
         <img src="img/detail-front.jpg" loading="lazy" alt="A Blinky Hawk standing on end on a countertop, the BLINKY HAWK name moulded into its green housing, with the metal toggle switch on top and an orange stacking banana plug and red lead at its base.">
-        <figcaption>Toggle on top, plugs on the bottom.</figcaption>
+        <figcaption>Small and compact.</figcaption>
       </figure>
       <figure>
         <img src="img/detail-back.jpg" loading="lazy" alt="The back of a Blinky Hawk, showing the black hook-and-loop pad that sticks it to a meter, and the stacking banana pins with an orange stacking plug pushed onto them.">
-        <figcaption>Hook-and-loop on the back; the plugs stack, so your probes still go in.</figcaption>
-      </figure>
-      <figure>
-        <img src="img/detail-on-meter.jpg" loading="lazy" alt="A Blinky Hawk attached to an orange Keysight U1272A that reads 0.0004 V, with a second unit on a meter blurred behind it glowing orange.">
-        <figcaption>Two meters, two answers &mdash; a real zero in front, live behind.</figcaption>
+        <figcaption>Rear view &mdash; hook-and-loop on the back to attach it to your meter.</figcaption>
       </figure>
     </div>
 
@@ -324,7 +302,7 @@
   </div>
 </section>
 <!-- WHY DIFFERENT -->
-<section id="why">
+<section id="why" class="alt">
   <div class="wrap">
     <span class="eyebrow">Why it's different</span>
     <h2>Not “Smart Mode.” It never switches modes.</h2>
@@ -343,7 +321,7 @@
     </div>
   </div>
 </section><!-- PAYOFF -->
-<section id="payoff" class="alt">
+<section id="payoff">
   <div class="wrap">
     <span class="eyebrow">The payoff</span>
     <h2>What “0&nbsp;V” can finally mean</h2>
@@ -386,7 +364,7 @@
   </div>
 </section>
 <!-- TECHNICAL POINTER -->
-<section id="deeper">
+<section id="deeper" class="alt">
   <div class="wrap">
     <span class="eyebrow">Under the hood</span>
     <h2>One MOSFET, one bridge, one transient</h2>
@@ -403,7 +381,7 @@
 </section>
 
 <!-- DOCUMENTATION -->
-<section id="docs" class="alt">
+<section id="docs">
   <div class="wrap">
     <span class="eyebrow">Documentation</span>
     <h2>Everything that ships with it</h2>
@@ -437,7 +415,7 @@
   </div>
 </section>
 <!-- DEMO VIDEO -->
-<section id="demo">
+<section id="demo" class="alt">
   <div class="wrap">
     <span class="eyebrow">See it in action</span>
     <h2>Two minutes on the bench</h2>
@@ -450,7 +428,7 @@
     </div>
   </div>
 </section><!-- NOTIFY / SIGNUP -->
-<section id="notify" class="alt">
+<section id="notify">
   <div class="wrap">
     <span class="eyebrow">Stay in the loop</span>
     <h2 class="center">Want to know when Blinky&nbsp;Hawk is available to order?</h2>

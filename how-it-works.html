@@ -215,8 +215,51 @@
   </div>
 </section>
 
+<!-- THE REQUIREMENT -->
+<section id="requirement" class="alt">
+  <div class="wrap">
+    <span class="eyebrow">The requirement</span>
+    <h2>What the circuit has to do</h2>
+    <p>A voltmeter reports one number for two completely different situations, and nothing in the
+      reading distinguishes them:</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>What's really happening</th><th>A normal meter says</th></tr></thead>
+        <tbody>
+          <tr><td>Probes on the same net (truly connected)</td><td>0 V</td></tr>
+          <tr><td>Probe floating / not contacting anything</td><td>0 V</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="cards">
+      <div class="card"><div class="lbl">At best</div>
+        <p style="margin:.4em 0 0">Wasted troubleshooting time chasing a &ldquo;dead&rdquo; circuit that was never really probed.</p></div>
+      <div class="card"><div class="lbl" style="color:var(--red)">At worst</div>
+        <p style="margin:.4em 0 0">You trust a &ldquo;0 V&rdquo; that is really a <strong>floating probe</strong> &mdash; and reach into
+        a circuit that is actually <strong style="color:var(--red)">live</strong>.</p></div>
+      <div class="card"><div class="lbl">Today's fix</div>
+        <p style="margin:.4em 0 0">The ohms-mode dance: power down &rarr; switch to &Omega; &rarr; read &rarr; switch back &rarr; power up.
+        Slow, repetitive, and easy to leave in the wrong mode.</p></div>
+    </div>
+
+    <h3>The solution, in one sentence</h3>
+    <div class="quote">A voltmeter that <span style="color:var(--accent)">continuously and automatically</span>
+      runs a continuity check between the probes whenever voltage is below a threshold (&lt;&nbsp;1&nbsp;V) &mdash;
+      and alerts you the instant it sees a low-impedance path between the probes.</div>
+    <p>No mode switch. No exposed ohmmeter. No guessing what &ldquo;0&nbsp;V&rdquo; means. It has to clear a short list of
+      hard requirements:</p>
+    <p>
+      <span class="pill">Survives &plusmn;1 kV</span>
+      <span class="pill">Doesn't disturb the reading</span>
+      <span class="pill">No perceptible delay</span>
+      <span class="pill">Compact &amp; low power</span>
+    </p>
+    <p>The rest of this page is how that gets built.</p>
+  </div>
+</section>
+
 <!-- HOW IT WORKS -->
-<section id="how" class="alt">
+<section id="how">
   <div class="wrap">
     <span class="eyebrow">How it works</span>
     <h2>One MOSFET, one bridge, one transient</h2>
@@ -256,7 +299,7 @@
 </section>
 
 <!-- DATA -->
-<section id="data">
+<section id="data" class="alt">
   <div class="wrap">
     <span class="eyebrow">The data</span>
     <h2>The decay maps cleanly to impedance</h2>
@@ -291,7 +334,7 @@
 </section>
 
 <!-- TWO FLAVORS -->
-<section id="flavors" class="alt">
+<section id="flavors">
   <div class="wrap">
     <span class="eyebrow">The two builds, side by side</span>
     <h2>What the tradeoff actually costs</h2>
@@ -328,7 +371,7 @@
 </section>
 
 <!-- ABUSE -->
-<section id="abuse">
+<section id="abuse" class="alt">
   <div class="wrap">
     <span class="eyebrow">Robustness</span>
     <h2>Survives real-world use and abuse</h2>
@@ -347,7 +390,7 @@
 </section>
 
 <!-- HARDWARE -->
-<section id="hardware" class="alt">
+<section id="hardware">
   <div class="wrap">
     <span class="eyebrow">The hardware</span>
     <h2>Real builds, validated on lots of silicon</h2>
@@ -385,7 +428,7 @@
 
 
 <!-- ROADMAP -->
-<section id="roadmap">
+<section id="roadmap" class="alt">
   <div class="wrap">
     <span class="eyebrow">Where it's going</span>
     <h2>Open questions &amp; product decisions</h2>
